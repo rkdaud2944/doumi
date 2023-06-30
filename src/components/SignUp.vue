@@ -1,74 +1,184 @@
 <template>
-  <div>
-    <FullCalendar :options="calendarOptions" class="calendar"/>
-    <br>
-    <button @click="showAll" class="show-all-btn">모든 데이터 보기</button>
-    <vue-good-table :columns="columns" :rows="rows" :search-options="{enabled: true}" @row-click="onRowClick" class="calendar">
-      <template #table-row="{row, column}">
-        <template v-if="column.label === '신청하기'">
-          <span v-if="row.test === row.test2">-</span>
-          <button v-else @click="yourButtonClickHandler(row)">신청하기</button>
-        </template>
-      </template>
-
-    </vue-good-table>
-    <div class="modal" v-if="showModal">
-      <div class="modal-content">
-        <span class="close" @click="closeModal">&times;</span>
-        <p>제목: {{ selectedRow.title }}</p>
-        <p>날짜: {{ selectedRow.createdAt }}</p>
-        <p>신청현황: {{ selectedRow.test }}/{{ selectedRow.test2 }}</p>
+<div>
+    <ul>
+      <div v-for="(item, index) in sortedData" :key="index">
+        <p>Date: {{ item.date }}</p>
+        <p>Value: {{ item.value }}</p>
       </div>
-    </div>
+
+    </ul>
+  </div>
+  <FullCalendar :options="calendarOptions" class="calendar"/>
+
+  <!-- Modal component -->
+  <div v-if="showModal" class="modal">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4>신청</h4>
+              <span @click="showModal = false" class="close">&times;</span>
+          </div>
+          <div class="modal-body">
+            <h3>날짜정해주세요.</h3>
+            <input type="radio" id="one-day" value="one" v-model="checkedValue" @change="onCheckboxChange">
+            <label for="one-day">하루에 다 오기</label>
+
+            <input type="radio" id="two-day" value="two" v-model="checkedValue" @change="onCheckboxChange">
+            <label for="two-day">2일에 걸쳐서</label>
+
+            <div v-if="checkedValue === 'one'">
+              <h3>신청하실 날짜입니다.</h3>
+              <div style="margin-bottom: 4%;">날짜 : {{selectedDate}}</div>
+                <div>
+                  <form>
+                    <h3>신청하실 시간대를 선택해주세요.</h3>
+                    <input type="radio" name="1" value="a"> 09:00 ~ 11:00<br>
+                    <input type="radio" name="2" value="b"> 11:00 ~ 13:00<br>
+                    <input type="radio" name="3" value="c"> 14:00 ~ 16:00<br>
+                    <input type="radio" name="4" value="d"> 16:00 ~ 18:00<br>
+                    <input type="radio" name="5" value="e"> 18:00 ~ 20:00<br>
+                    <br>
+                  </form>
+                </div>
+            </div>
+            <div v-if="checkedValue === 'two'">
+              <div style="display: flex; justify-content: space-between;">
+                <div>
+                  <h3>첫번째 신청하실 날짜입니다.</h3>
+                  <div style="margin-bottom: 10%;">날짜 : {{selectedDate}}</div>
+                  <div>
+                    <form>
+                      <h3>첫번째 신청하실 시간대를 선택해주세요.</h3>
+                      <input type="radio" name="1" value="a"> 09:00 ~ 11:00<br>
+                      <input type="radio" name="2" value="b"> 11:00 ~ 13:00<br>
+                      <input type="radio" name="3" value="c"> 14:00 ~ 16:00<br>
+                      <input type="radio" name="4" value="d"> 16:00 ~ 18:00<br>
+                      <input type="radio" name="5" value="e"> 18:00 ~ 20:00<br>
+                      <br>
+                    </form>
+                  </div>
+                </div>
+                <div style="margin-right: 10%;">
+                  <h3>두번째 신청하실 날짜를 선택해주세요.</h3>
+                  <input type="date" id="newDate" v-model="newDate" :min="minDate" @change="updateMinDate">
+                  <div>
+                    <form>
+                      <h3>두번째 신청하실 시간대를 선택해주세요.</h3>
+                      <input type="radio" name="1" value="a"> 09:00 ~ 11:00<br>
+                      <input type="radio" name="2" value="b"> 11:00 ~ 13:00<br>
+                      <input type="radio" name="3" value="c"> 14:00 ~ 16:00<br>
+                      <input type="radio" name="4" value="d"> 16:00 ~ 18:00<br>
+                      <input type="radio" name="5" value="e"> 18:00 ~ 20:00<br>
+                      <br>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+              <button @click="showModal = false">Close</button>
+          </div>
+      </div>
   </div>
 </template>
-
-
 
 <script>
 import { ref, watch  } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import 'vue-good-table-next/dist/vue-good-table-next.css'
-import { VueGoodTable } from 'vue-good-table-next';
+import axios from 'axios';
 
 export default {
+  computed: {
 
+  },
+
+  watch: {
+    showModal(value) {
+      if (value === true) {
+        this.updateMinDate();
+      } else {
+        this.minDate = null;
+      }
+    },
+  },
   data() {
     return {
-      selectedRow: null,
-      showModal: false,
+      // ...
+      newDate: null,
+      minDate: null,
+      test33: [],
+      sortedData: [],
+      resultDate: []
     };
   },
-
-  methods: {
-    onRowClick(params) {
-      this.selectedRow = params.row;
-      this.showModal = true;
-    },
-    closeModal() {
-      this.showModal = false;
-    },
-    yourButtonClickHandler() {
-      console.log("버튼 눌림");
-    },
+  created() {
+    this.fetchData();
   },
+  methods: {
+    fetchData() {
+      axios
+        .post('http://localhost:8081/reserve/api/v1/admin/findAllLocalChildren?curriculumSn=12')
+        .then(response => {
+          // 데이터를 성공적으로 받아왔을 때 처리할 로직 작성
+          console.log(response.data);
+          var a = response.data;
+          var b = a.result;
+          var c = b.data;
+          // console.log("c : "+JSON.stringify(c))
+          this.test33 = JSON.stringify(c);
 
+          let dataObject = JSON.parse(this.test33);
+          // this.sortedData = Object.entries(dataObject)
+          //   .map(([date, value]) => ({date, value}))
+          //   .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+          
+          console.log("sortedData : "+JSON.stringify(dataObject))
+
+          for (var i in dataObject){
+            // console.log("i : "+i+" ---> "+Object.values(dataObject[i]))
+            var k = i.substring(0,10)
+            console.log("i : "+k+" ---> "+dataObject[i])
+            
+            this.resultDate.push({date: k, test2: dataObject[i]})
+          }
+
+          console.log("Adsfadfa s : "+JSON.stringify(this.resultDate))
+
+        })
+        .catch(error => {
+          // 에러 처리
+          console.error(error);
+        });
+    },
+    updateMinDate() {
+      const selectedDate = new Date(this.selectedDate);
+      const minDate = new Date(selectedDate.getTime() + 24 * 60 * 60 * 1000); // Add 1 day to the selected date
+      this.minDate = minDate.toISOString().split("T")[0];
+    },
+    // ...
+  },
   components: {
     FullCalendar,
-    VueGoodTable,
   },
 
   setup() {
-    function showAll() {
-      rows.value = [...originalRows.value];
-    }
-
+    
+    const showModal = ref(false);
+    const selectedDate = ref(null);
+    const checkedValue = ref("one");
+    
+    watch(showModal, (value) => {
+      if (value === true) {
+        checkedValue.value = "one";
+      }
+    });
     const columns = ref([
       {
         label: '날짜',
-        field: 'createdAt',
+        field: 'date',
         type: 'date',
         dateInputFormat: 'yyyy-MM-dd',
         dateOutputFormat: 'yyyy-MM-dd',
@@ -103,25 +213,25 @@ export default {
       },
     ]);
 
+
     const originalRows = ref([
-      { id: 1, title: "4차시 틴커캐드를 활용한 3D 모델링", test: 26, test2: 26, createdAt: '2023-06-13'},
-      { id: 2, title: "3차시 메타버스 타고 떠나는 세계여행_휴대폰용", test: 25, test2: 25, createdAt: '2023-06-14'},
-      { id: 3, title: "4차시 틴커캐드를 활용한 3D 모델링", test: 14, test2: 20, createdAt: '2023-06-12'},
-      { id: 4, title: "4차시 메타버스 타고 떠나는 세계여행", test: 7, test2: 24, createdAt: '2023-06-13'},
-      { id: 5, title: "4차시 인벤이의 하루", test: 1, test2: 18, createdAt: '2023-06-14'},
-      { id: 6, title: "8차시 메타버스 타고 떠나는 세계여행", test: 50, test2: 50, createdAt: '2023-06-12'},
-      { id: 7, title: "4차시 메타버스 타고 떠나는 세계여행", test: 16, test2: 50, createdAt: '2023-06-13'},
-      { id: 8, title: "4차시 메타버스 타고 떠나는 세계여행", test: 16, test2: 50, createdAt: '2023-06-14'},
+      { id: 1, test: 0, test2: 99, date: '2023-06-09'},
+      { id: 2, test: 0, test2: 99, date: '2023-06-08'},
+      { id: 3, test: 0, test2: 99, date: '2023-06-12'},
+      { id: 4, test: 7, test2: 99, date: '2023-06-13'},
+      { id: 5, test: 1, test2: 99, date: '2023-06-14'},
+      { test: 50, test2: 50, date: '2023-06-15'},
+      { date: '2023-06-16'},
+      { date: '2023-06-19'},
     ]);
-    
+
+
     const rows = ref([...originalRows.value]);
 
     const convertRowsToEvents = (rows) => {
       const eventsFromRows = rows.map(row => ({
-        title: row.title,
-        date: row.createdAt,
-        test: row.test,
-        test2: row.test2,
+        value: row.value,
+        date: row.date,
       }));
 
       const holidays = [
@@ -143,14 +253,14 @@ export default {
         { title: '한글날', date: '2023-10-09' },
         { title: '성탄절', date: '2023-12-25' }
       ];
-        for (const holiday of holidays) {
-          eventsFromRows.push({
-            title: holiday.title,
-            date: holiday.date,
-            classNames: 'holiday-event',
-            textColor: 'red' 
-          });
-        }
+      for (const holiday of holidays) {
+        eventsFromRows.push({
+          title: holiday.title,
+          date: holiday.date,
+          classNames: 'holiday-event',
+          textColor: 'red' 
+        });
+      }
       return eventsFromRows;
     };
 
@@ -159,6 +269,7 @@ export default {
     watch(rows, (newRows) => {
       calendarEvents.value = convertRowsToEvents(newRows);
     });
+    
 
     const calendarOptions = {
       plugins: [dayGridPlugin, interactionPlugin],
@@ -205,6 +316,8 @@ export default {
     }
 
     function handleDateClick(arg) {
+      selectedDate.value = arg.dateStr;
+      showModal.value = true;
       const clickedDate = arg.dateStr;  
         rows.value = originalRows.value.filter(row => row.createdAt === clickedDate);
         window.scrollTo({
@@ -249,13 +362,14 @@ export default {
         if (test === test2) {
             content = `
                 <div class="event-content" style="display: flex; justify-content: space-between;">
-                    <span class="event-title" style="text-decoration: line-through; margin-left: 5px; text-overflow: "";">${arg.event.title}</span>
+                    <span class="event-title" style=" margin-right: auto; margin-left: auto; text-align:center;">마감</span>
                 </div>`;
         } else {
             content = `
                 <div class="event-content" style="display: flex; justify-content: space-between;">
-                    <span class="event-title" style="margin-left: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${arg.event.title}</span>
-                    <span class="event-ratio" style="margin-right: 5px;">(${test ? test : ''}${test2 ? '/' + test2 : ''})</span>
+                  <span class="event-ratio" style="margin-right: auto; margin-left: auto; text-align: center;">${(test2 - test) || ''}
+                    <span style="margin-left:2px;">자리남음</span>
+                  </span>
                 </div>`;
         }
         return { html: content };
@@ -263,12 +377,14 @@ export default {
     }
     return {
       columns,
-      rows,
-      calendarOptions,
-      handleDateClick,
-      customEventContent,
-      calendarEvents,
-      showAll
+            rows,
+            calendarOptions,
+            handleDateClick,
+            customEventContent,
+            calendarEvents,
+            showModal,
+            selectedDate,
+            checkedValue,
     }
   }
 }
@@ -313,51 +429,47 @@ export default {
   height: 100px;
   overflow: hidden;
 }
-.show-all-btn {
-  display: block;
-  margin: 0 auto 10px;
-  padding: 10px 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.show-all-btn:hover {
-  background-color: #45a049;
-}
 .modal {
   display: block;
   position: fixed;
-  z-index: 1;
-  padding-top: 100px;
-  left: 0;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.5);
 }
-
 .modal-content {
   background-color: #fefefe;
-  margin: auto;
+  margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 80%;
+  bottom:80px;
 }
-
+.modal-header{
+  padding: 10px;
+  text-align: center;
+}
+.modal-footer {
+  padding: 10px;
+  text-align: right;
+}
+#two-day{
+  margin-left: 5%;
+}
 .close {
-  color: #aaaaaa;
-  float: right;
+  position: absolute;
+  right: 15px;
+  top: 10px;
   font-size: 28px;
   font-weight: bold;
+  color: #000;
 }
-
 .close:hover,
 .close:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
 }
+
 </style>
