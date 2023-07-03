@@ -1,6 +1,8 @@
 <template>
   <!-- 캘린더-->
-  <FullCalendar :options="calendarOptions" class="calendar"/>
+  <!-- <FullCalendar :options="calendarOptions" class="calendar" id="calendarID"></FullCalendar> -->
+  <div id="calendarID"></div>
+  <!-- <div ref="calendarRef" id="existing-calendar"></div> -->
 
   <!-- 모달창 -->
   <div v-if="showModal" class="modal">
@@ -75,7 +77,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
@@ -84,15 +86,15 @@ import moment from 'moment';
 
 
 export default {
-  // watch: {
-  //   showModal(value) {
-  //     if (value === true) {
-  //       this.updateMinDate();
-  //     } else {
-  //       this.minDate = null;
-  //     }
-  //   },
-  // },
+  watch: {
+    showModal(value) {
+      if (value === true) {
+        this.updateMinDate();
+      } else {
+        this.minDate = null;
+      }
+    },
+  },
   data() {
     return {
       newDate: null,
@@ -113,7 +115,7 @@ export default {
     // ...
   },
   components: {
-    FullCalendar,
+    // FullCalendar,
   },
 
   setup() {
@@ -122,12 +124,93 @@ export default {
     const selectedDate = ref(null);
     const checkedValue = ref("one");
     const resultEvent = ref(null);
+
+    const calendarOptions = ref(null);
+    // const calendarRef = ref(null);
     
-    // watch(showModal, (value) => {
-    //   if (value === true) {
-    //     checkedValue.value = "one";
-    //   }
-    // });
+    watch(showModal, (value) => {
+      if (value === true) {
+        checkedValue.value = "one";
+      }
+    }); 
+    
+
+    
+    // watch(resultEvent, (value) => {
+    //   const calendarEl = document.getElementById('existing-calendar');
+    //   calendarRef.value = calendarEl;
+      
+    //   console.log("와치안에 밸류 ㅣ: "+value)
+      
+    //   const calendar = new FullCalendar(calendarEl, calendarOptions.value);
+    //   calendar.render();
+    // }); 
+
+    
+    watch(resultEvent, () => {
+    }); 
+
+    const renderCalendar = () => {
+      console.log("순서 여기는 랜더링된 캘린더~")
+      const calendarEl = document.getElementById('calendarID');
+      // calendarEl.render();
+      // console.log("aa")
+
+      
+      const calendar = new FullCalendar(calendarEl, {
+        plugins: [dayGridPlugin, interactionPlugin],
+        initialView: 'dayGridMonth',
+        dateClick: handleDateClick,
+        eventContent: customEventContent,
+        events: resultEvent.value ,
+        dayMaxEvents: 4,
+        
+        dayCellContent: () => {
+          return {html: `<div>Test</div>`};
+        },
+
+        // dayCellContent: (arg) => {
+        //   console.log("resultEvent.value : "+JSON.stringify(resultEvent.value))
+        //   console.log("calendarEvents : "+JSON.stringify(calendarEvents.value))
+        //   console.log("순서:" + 2)
+        //   const date = arg.date;
+
+        //   const holidays = [
+        //     { month: 0, day: 1 },  
+        //     { month: 0, day: 21 }, 
+        //     { month: 0, day: 22 }, 
+        //     { month: 0, day: 23 },  
+        //     { month: 0, day: 24 },  
+        //     { month: 2, day: 1 }, 
+        //     { month: 4, day: 1 }, 
+        //     { month: 4, day: 5 }, 
+        //     { month: 4, day: 27 },
+        //     { month: 5, day: 6 },  
+        //     { month: 7, day: 15 },  
+        //     { month: 8, day: 28 },  
+        //     { month: 8, day: 29 },
+        //     { month: 8, day: 30 },
+        //     { month: 9, day: 3 },
+        //     { month: 9, day: 9 },
+        //     { month: 11, day: 25 },
+        //   ];
+
+        //   const isHoliday = holidays.some(
+        //     holiday => date.getFullYear() === 2023 && date.getMonth() === holiday.month && date.getDate() === holiday.day
+        //   );
+
+        //   const isSunday = date.getDay() === 0;
+        //   if (isHoliday || isSunday) {
+        //     return {html: `<div style="color: red;">${date.getDate()}</div>`};
+        //   } else {
+        //     return {html: `<div>${date.getDate()}</div>`};
+        //   }
+        // },
+      });
+      console.log("순서 123123")
+      calendar.render();
+    }
+    
 
     const fetchData = () => {
       axios
@@ -150,11 +233,64 @@ export default {
           console.log("순서 :  " +1)
           console.log('resultEvent.value 2  '+JSON.stringify(resultEvent.value))
           // console.log(rows.value)
+          
+          renderCalendar();
+          
+
+
         })
         .catch(error => {
           console.error(error)
         })
     }
+
+    // calendarOptions.value = {
+    //   plugins: [dayGridPlugin, interactionPlugin],
+    //   initialView: 'dayGridMonth',
+    //   dateClick: handleDateClick,
+    //   eventContent: customEventContent,
+    //   events: resultEvent.value ,
+    //   dayMaxEvents: 4,
+
+    //   dayCellContent: (arg) => {
+    //     console.log("resultEvent.value : "+JSON.stringify(resultEvent.value))
+    //     console.log("calendarEvents : "+JSON.stringify(calendarEvents.value))
+    //     console.log("순서:" + 2)
+    //     const date = arg.date;
+
+    //     const holidays = [
+    //       { month: 0, day: 1 },  
+    //       { month: 0, day: 21 }, 
+    //       { month: 0, day: 22 }, 
+    //       { month: 0, day: 23 },  
+    //       { month: 0, day: 24 },  
+    //       { month: 2, day: 1 }, 
+    //       { month: 4, day: 1 }, 
+    //       { month: 4, day: 5 }, 
+    //       { month: 4, day: 27 },
+    //       { month: 5, day: 6 },  
+    //       { month: 7, day: 15 },  
+    //       { month: 8, day: 28 },  
+    //       { month: 8, day: 29 },
+    //       { month: 8, day: 30 },
+    //       { month: 9, day: 3 },
+    //       { month: 9, day: 9 },
+    //       { month: 11, day: 25 },
+    //     ];
+
+    //     const isHoliday = holidays.some(
+    //       holiday => date.getFullYear() === 2023 && date.getMonth() === holiday.month && date.getDate() === holiday.day
+    //     );
+
+    //     const isSunday = date.getDay() === 0;
+    //     if (isHoliday || isSunday) {
+    //       return {html: `<div style="color: red;">${date.getDate()}</div>`};
+    //     } else {
+    //       return {html: `<div>${date.getDate()}</div>`};
+    //     }
+    //   },
+    // }
+
     
     fetchData();
 
@@ -212,57 +348,12 @@ export default {
     const calendarEvents = ref(convertRowsToEvents(rows.value));
     
 
-    // watch(rows, (newRows) => {
-    //   calendarEvents.value = convertRowsToEvents(newRows);
-    // });
-    // console.log(calendarEvents);
+    watch(rows, (newRows) => {
+      calendarEvents.value = convertRowsToEvents(newRows);
+    });
+    console.log(calendarEvents);
 
-    const calendarOptions = {
-      plugins: [dayGridPlugin, interactionPlugin],
-      initialView: 'dayGridMonth',
-      dateClick: handleDateClick,
-      eventContent: customEventContent,
-      events: resultEvent.value ,
-      dayMaxEvents: 4,
-
-      dayCellContent: (arg) => {
-        console.log("resultEvent.value : "+JSON.stringify(resultEvent.value))
-        console.log("calendarEvents : "+JSON.stringify(calendarEvents.value))
-        console.log("순서:" + 2)
-        const date = arg.date;
-
-        const holidays = [
-          { month: 0, day: 1 },  
-          { month: 0, day: 21 }, 
-          { month: 0, day: 22 }, 
-          { month: 0, day: 23 },  
-          { month: 0, day: 24 },  
-          { month: 2, day: 1 }, 
-          { month: 4, day: 1 }, 
-          { month: 4, day: 5 }, 
-          { month: 4, day: 27 },
-          { month: 5, day: 6 },  
-          { month: 7, day: 15 },  
-          { month: 8, day: 28 },  
-          { month: 8, day: 29 },
-          { month: 8, day: 30 },
-          { month: 9, day: 3 },
-          { month: 9, day: 9 },
-          { month: 11, day: 25 },
-        ];
-
-        const isHoliday = holidays.some(
-          holiday => date.getFullYear() === 2023 && date.getMonth() === holiday.month && date.getDate() === holiday.day
-        );
-
-        const isSunday = date.getDay() === 0;
-        if (isHoliday || isSunday) {
-          return {html: `<div style="color: red;">${date.getDate()}</div>`};
-        } else {
-          return {html: `<div>${date.getDate()}</div>`};
-        }
-      },
-    }
+    
 
     function handleDateClick(arg) {
       selectedDate.value = arg.dateStr;
