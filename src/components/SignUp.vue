@@ -1,16 +1,8 @@
 <template>
-<div>
-    <ul>
-      <div v-for="(item, index) in sortedData" :key="index">
-        <p>Date: {{ item.date }}</p>
-        <p>Value: {{ item.value }}</p>
-      </div>
-
-    </ul>
-  </div>
+  <!-- 캘린더-->
   <FullCalendar :options="calendarOptions" class="calendar"/>
 
-  <!-- Modal component -->
+  <!-- 모달창 -->
   <div v-if="showModal" class="modal">
       <div class="modal-content">
           <div class="modal-header">
@@ -83,76 +75,36 @@
 </template>
 
 <script>
-import { ref, watch  } from 'vue'
+import { ref } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import axios from 'axios';
+import moment from 'moment';
+
 
 export default {
-  computed: {
-
-  },
-
-  watch: {
-    showModal(value) {
-      if (value === true) {
-        this.updateMinDate();
-      } else {
-        this.minDate = null;
-      }
-    },
-  },
+  // watch: {
+  //   showModal(value) {
+  //     if (value === true) {
+  //       this.updateMinDate();
+  //     } else {
+  //       this.minDate = null;
+  //     }
+  //   },
+  // },
   data() {
     return {
-      // ...
       newDate: null,
       minDate: null,
-      test33: [],
-      sortedData: [],
-      resultDate: []
+      data: [],
     };
   },
-  created() {
-    this.fetchData();
+  mounted() {
+    
   },
   methods: {
-    fetchData() {
-      axios
-        .post('http://localhost:8081/reserve/api/v1/admin/findAllLocalChildren?curriculumSn=12')
-        .then(response => {
-          // 데이터를 성공적으로 받아왔을 때 처리할 로직 작성
-          console.log(response.data);
-          var a = response.data;
-          var b = a.result;
-          var c = b.data;
-          // console.log("c : "+JSON.stringify(c))
-          this.test33 = JSON.stringify(c);
-
-          let dataObject = JSON.parse(this.test33);
-          // this.sortedData = Object.entries(dataObject)
-          //   .map(([date, value]) => ({date, value}))
-          //   .sort((a, b) => new Date(b.date) - new Date(a.date));
-
-          
-          console.log("sortedData : "+JSON.stringify(dataObject))
-
-          for (var i in dataObject){
-            // console.log("i : "+i+" ---> "+Object.values(dataObject[i]))
-            var k = i.substring(0,10)
-            console.log("i : "+k+" ---> "+dataObject[i])
-            
-            this.resultDate.push({date: k, test2: dataObject[i]})
-          }
-
-          console.log("Adsfadfa s : "+JSON.stringify(this.resultDate))
-
-        })
-        .catch(error => {
-          // 에러 처리
-          console.error(error);
-        });
-    },
+      
     updateMinDate() {
       const selectedDate = new Date(this.selectedDate);
       const minDate = new Date(selectedDate.getTime() + 24 * 60 * 60 * 1000); // Add 1 day to the selected date
@@ -169,69 +121,62 @@ export default {
     const showModal = ref(false);
     const selectedDate = ref(null);
     const checkedValue = ref("one");
+    const resultEvent = ref(null);
     
-    watch(showModal, (value) => {
-      if (value === true) {
-        checkedValue.value = "one";
-      }
-    });
-    const columns = ref([
-      {
-        label: '날짜',
-        field: 'date',
-        type: 'date',
-        dateInputFormat: 'yyyy-MM-dd',
-        dateOutputFormat: 'yyyy-MM-dd',
-        width: '15%',
-        align: 'center'
-      },
-      {
-        label: '제목',
-        field: 'title',
-        width: 'auto',
-        align: 'left'
-      },
-      {
-        label: '신청현황',
-        field: 'test',
-        width: '15%',
-        align: 'center',
-        formatFn: (value, row) => {
-          if (row.test === row.test2) {
-            return '마감';
-          } else {
-            return `${value}/${row.test2}`;
-          }
-        },
-      },
-      {
-        label: '신청하기',
-        field: 'button',
-        width: '10%',
-        align: 'center',
-        slot: 'table-row'
-      },
-    ]);
+    // watch(showModal, (value) => {
+    //   if (value === true) {
+    //     checkedValue.value = "one";
+    //   }
+    // });
 
+    const fetchData = () => {
+      axios
+        .post('http://localhost:8081/reserve/api/v1/admin/findAllLocalChildren?curriculumSn=12')
+        .then(response => {
+          var data = response.data.result.data
+
+          const events = Object.entries(data).map(([date, value]) => {
+            let startDate = moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD')
+            let event = {
+              title: `Event: ${value}`,
+              date: startDate,
+              test: null, // Set the appropriate value for this property
+              test2: null // Set the appropriate value for this property
+            }
+            // console.log("이벤트즈 : " +JSON.stringify(event))
+            return event
+          })
+          resultEvent.value = events
+          console.log("순서 :  " +1)
+          console.log('resultEvent.value 2  '+JSON.stringify(resultEvent.value))
+          // console.log(rows.value)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    }
+    
+    fetchData();
 
     const originalRows = ref([
-      { id: 1, test: 0, test2: 99, date: '2023-06-09'},
-      { id: 2, test: 0, test2: 99, date: '2023-06-08'},
-      { id: 3, test: 0, test2: 99, date: '2023-06-12'},
-      { id: 4, test: 7, test2: 99, date: '2023-06-13'},
-      { id: 5, test: 1, test2: 99, date: '2023-06-14'},
-      { test: 50, test2: 50, date: '2023-06-15'},
-      { date: '2023-06-16'},
-      { date: '2023-06-19'},
+      { id: 1, test: 0, test2: 99, createdAt: '2023-07-09'},
+      { id: 2, test: 0, test2: 99, createdAt: '2023-07-08'},
+      { id: 3, test: 0, test2: 99, createdAt: '2023-07-12'},
+      { id: 4, test: 7, test2: 99, createdAt: '2023-07-13'},
+      { id: 5, test: 1, test2: 99, createdAt: '2023-07-14'},
+      { id: 6, test: 50, test2: 50, createdAt: '2023-07-15'},
+      { id: 7, test: 16, test2: 50, createdAt: '2023-07-16'},
+      { id: 8, test: 16, test2: 50, createdAt: '2023-07-19'},
     ]);
-
-
+    
     const rows = ref([...originalRows.value]);
 
     const convertRowsToEvents = (rows) => {
       const eventsFromRows = rows.map(row => ({
-        value: row.value,
-        date: row.date,
+        title: row.title,
+        date: row.createdAt,
+        test: row.test,
+        test2: row.test2,
       }));
 
       const holidays = [
@@ -265,21 +210,25 @@ export default {
     };
 
     const calendarEvents = ref(convertRowsToEvents(rows.value));
-
-    watch(rows, (newRows) => {
-      calendarEvents.value = convertRowsToEvents(newRows);
-    });
     
+
+    // watch(rows, (newRows) => {
+    //   calendarEvents.value = convertRowsToEvents(newRows);
+    // });
+    // console.log(calendarEvents);
 
     const calendarOptions = {
       plugins: [dayGridPlugin, interactionPlugin],
       initialView: 'dayGridMonth',
       dateClick: handleDateClick,
       eventContent: customEventContent,
-      events: calendarEvents.value ,
+      events: resultEvent.value ,
       dayMaxEvents: 4,
 
       dayCellContent: (arg) => {
+        console.log("resultEvent.value : "+JSON.stringify(resultEvent.value))
+        console.log("calendarEvents : "+JSON.stringify(calendarEvents.value))
+        console.log("순서:" + 2)
         const date = arg.date;
 
         const holidays = [
@@ -376,7 +325,6 @@ export default {
       }
     }
     return {
-      columns,
             rows,
             calendarOptions,
             handleDateClick,
@@ -385,6 +333,8 @@ export default {
             showModal,
             selectedDate,
             checkedValue,
+            fetchData,
+            resultEvent
     }
   }
 }
