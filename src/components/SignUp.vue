@@ -1,308 +1,117 @@
 <template>
-  <!-- 캘린더-->
-  <!-- <FullCalendar :options="calendarOptions" class="calendar" id="calendarID"></FullCalendar> -->
-  <div id="calendarID"></div>
-  <!-- <div ref="calendarRef" id="existing-calendar"></div> -->
+  <div>
+    <FullCalendar :options="calendarOptions" class="calendar"/>
+    <br>
+    <button @click="showAll" class="show-all-btn">모든 데이터 보기</button>
+    <vue-good-table :columns="columns" :rows="rows" :search-options="{enabled: true}" @row-click="onRowClick" class="calendar">
+      <template #table-row="{row, column}">
+        <template v-if="column.label === '신청하기'">
+          <span v-if="row.test === row.test2">-</span>
+          <button v-else @click="yourButtonClickHandler(row)">신청하기</button>
+        </template>
+      </template>
 
-  <!-- 모달창 -->
-  <div v-if="showModal" class="modal">
+    </vue-good-table>
+    <div class="modal" v-if="showModal">
       <div class="modal-content">
-          <div class="modal-header">
-              <h4>신청</h4>
-              <span @click="showModal = false" class="close">&times;</span>
-          </div>
-          <div class="modal-body">
-            <h3>날짜정해주세요.</h3>
-            <input type="radio" id="one-day" value="one" v-model="checkedValue" @change="onCheckboxChange">
-            <label for="one-day">하루에 다 오기</label>
-
-            <input type="radio" id="two-day" value="two" v-model="checkedValue" @change="onCheckboxChange">
-            <label for="two-day">2일에 걸쳐서</label>
-
-            <div v-if="checkedValue === 'one'">
-              <h3>신청하실 날짜입니다.</h3>
-              <div style="margin-bottom: 4%;">날짜 : {{selectedDate}}</div>
-                <div>
-                  <form>
-                    <h3>신청하실 시간대를 선택해주세요.</h3>
-                    <input type="radio" name="1" value="a"> 09:00 ~ 11:00<br>
-                    <input type="radio" name="2" value="b"> 11:00 ~ 13:00<br>
-                    <input type="radio" name="3" value="c"> 14:00 ~ 16:00<br>
-                    <input type="radio" name="4" value="d"> 16:00 ~ 18:00<br>
-                    <input type="radio" name="5" value="e"> 18:00 ~ 20:00<br>
-                    <br>
-                  </form>
-                </div>
-            </div>
-            <div v-if="checkedValue === 'two'">
-              <div style="display: flex; justify-content: space-between;">
-                <div>
-                  <h3>첫번째 신청하실 날짜입니다.</h3>
-                  <div style="margin-bottom: 10%;">날짜 : {{selectedDate}}</div>
-                  <div>
-                    <form>
-                      <h3>첫번째 신청하실 시간대를 선택해주세요.</h3>
-                      <input type="radio" name="1" value="a"> 09:00 ~ 11:00<br>
-                      <input type="radio" name="2" value="b"> 11:00 ~ 13:00<br>
-                      <input type="radio" name="3" value="c"> 14:00 ~ 16:00<br>
-                      <input type="radio" name="4" value="d"> 16:00 ~ 18:00<br>
-                      <input type="radio" name="5" value="e"> 18:00 ~ 20:00<br>
-                      <br>
-                    </form>
-                  </div>
-                </div>
-                <div style="margin-right: 10%;">
-                  <h3>두번째 신청하실 날짜를 선택해주세요.</h3>
-                  <input type="date" id="newDate" v-model="newDate" :min="minDate" @change="updateMinDate">
-                  <div>
-                    <form>
-                      <h3>두번째 신청하실 시간대를 선택해주세요.</h3>
-                      <input type="radio" name="1" value="a"> 09:00 ~ 11:00<br>
-                      <input type="radio" name="2" value="b"> 11:00 ~ 13:00<br>
-                      <input type="radio" name="3" value="c"> 14:00 ~ 16:00<br>
-                      <input type="radio" name="4" value="d"> 16:00 ~ 18:00<br>
-                      <input type="radio" name="5" value="e"> 18:00 ~ 20:00<br>
-                      <br>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-              <button @click="showModal = false">Close</button>
-          </div>
+        <span class="close" @click="closeModal">&times;</span>
+        <p>제목: {{ selectedRow.title }}</p>
+        <p>날짜: {{ selectedRow.createdAt }}</p>
+        <p>신청현황: {{ selectedRow.test }}/{{ selectedRow.test2 }}</p>
       </div>
+    </div>
   </div>
 </template>
 
+
+
 <script>
-import { ref, watch } from 'vue'
+import { ref, watch  } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import axios from 'axios';
-import moment from 'moment';
-
+import 'vue-good-table-next/dist/vue-good-table-next.css'
+import { VueGoodTable } from 'vue-good-table-next';
 
 export default {
-  watch: {
-    showModal(value) {
-      if (value === true) {
-        this.updateMinDate();
-      } else {
-        this.minDate = null;
-      }
-    },
-  },
+
   data() {
     return {
-      newDate: null,
-      minDate: null,
-      data: [],
+      selectedRow: null,
+      showModal: false,
     };
   },
-  mounted() {
-    
-  },
+
   methods: {
-      
-    updateMinDate() {
-      const selectedDate = new Date(this.selectedDate);
-      const minDate = new Date(selectedDate.getTime() + 24 * 60 * 60 * 1000); // Add 1 day to the selected date
-      this.minDate = minDate.toISOString().split("T")[0];
+    onRowClick(params) {
+      this.selectedRow = params.row;
+      this.showModal = true;
     },
-    // ...
+    closeModal() {
+      this.showModal = false;
+    },
+    yourButtonClickHandler() {
+      console.log("버튼 눌림");
+    },
   },
+
   components: {
-    // FullCalendar,
+    FullCalendar,
+    VueGoodTable,
   },
 
   setup() {
-    
-    const showModal = ref(false);
-    const selectedDate = ref(null);
-    const checkedValue = ref("one");
-    const resultEvent = ref(null);
+    function showAll() {
+      rows.value = [...originalRows.value];
+    }
 
-    const calendarOptions = ref(null);
-    // const calendarRef = ref(null);
-    
-    watch(showModal, (value) => {
-      if (value === true) {
-        checkedValue.value = "one";
-      }
-    }); 
-    
-
-    
-    // watch(resultEvent, (value) => {
-    //   const calendarEl = document.getElementById('existing-calendar');
-    //   calendarRef.value = calendarEl;
-      
-    //   console.log("와치안에 밸류 ㅣ: "+value)
-      
-    //   const calendar = new FullCalendar(calendarEl, calendarOptions.value);
-    //   calendar.render();
-    // }); 
-
-    
-    watch(resultEvent, () => {
-    }); 
-
-    const renderCalendar = () => {
-      console.log("순서 여기는 랜더링된 캘린더~")
-      const calendarEl = document.getElementById('calendarID');
-      // calendarEl.render();
-      // console.log("aa")
-
-      
-      const calendar = new FullCalendar(calendarEl, {
-        plugins: [dayGridPlugin, interactionPlugin],
-        initialView: 'dayGridMonth',
-        dateClick: handleDateClick,
-        eventContent: customEventContent,
-        events: resultEvent.value ,
-        dayMaxEvents: 4,
-        
-        dayCellContent: () => {
-          return {html: `<div>Test</div>`};
+    const columns = ref([
+      {
+        label: '날짜',
+        field: 'createdAt',
+        type: 'date',
+        dateInputFormat: 'yyyy-MM-dd',
+        dateOutputFormat: 'yyyy-MM-dd',
+        width: '15%',
+        align: 'center'
+      },
+      {
+        label: '제목',
+        field: 'title',
+        width: 'auto',
+        align: 'left'
+      },
+      {
+        label: '신청현황',
+        field: 'test',
+        width: '15%',
+        align: 'center',
+        formatFn: (value, row) => {
+          if (row.test === row.test2) {
+            return '마감';
+          } else {
+            return `${value}/${row.test2}`;
+          }
         },
-
-        // dayCellContent: (arg) => {
-        //   console.log("resultEvent.value : "+JSON.stringify(resultEvent.value))
-        //   console.log("calendarEvents : "+JSON.stringify(calendarEvents.value))
-        //   console.log("순서:" + 2)
-        //   const date = arg.date;
-
-        //   const holidays = [
-        //     { month: 0, day: 1 },  
-        //     { month: 0, day: 21 }, 
-        //     { month: 0, day: 22 }, 
-        //     { month: 0, day: 23 },  
-        //     { month: 0, day: 24 },  
-        //     { month: 2, day: 1 }, 
-        //     { month: 4, day: 1 }, 
-        //     { month: 4, day: 5 }, 
-        //     { month: 4, day: 27 },
-        //     { month: 5, day: 6 },  
-        //     { month: 7, day: 15 },  
-        //     { month: 8, day: 28 },  
-        //     { month: 8, day: 29 },
-        //     { month: 8, day: 30 },
-        //     { month: 9, day: 3 },
-        //     { month: 9, day: 9 },
-        //     { month: 11, day: 25 },
-        //   ];
-
-        //   const isHoliday = holidays.some(
-        //     holiday => date.getFullYear() === 2023 && date.getMonth() === holiday.month && date.getDate() === holiday.day
-        //   );
-
-        //   const isSunday = date.getDay() === 0;
-        //   if (isHoliday || isSunday) {
-        //     return {html: `<div style="color: red;">${date.getDate()}</div>`};
-        //   } else {
-        //     return {html: `<div>${date.getDate()}</div>`};
-        //   }
-        // },
-      });
-      console.log("순서 123123")
-      calendar.render();
-    }
-    
-
-    const fetchData = () => {
-      axios
-        .post('http://localhost:8081/reserve/api/v1/admin/findAllLocalChildren?curriculumSn=12')
-        .then(response => {
-          var data = response.data.result.data
-
-          const events = Object.entries(data).map(([date, value]) => {
-            let startDate = moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD')
-            let event = {
-              title: `Event: ${value}`,
-              date: startDate,
-              test: null, // Set the appropriate value for this property
-              test2: null // Set the appropriate value for this property
-            }
-            // console.log("이벤트즈 : " +JSON.stringify(event))
-            return event
-          })
-          resultEvent.value = events
-          console.log("순서 :  " +1)
-          console.log('resultEvent.value 2  '+JSON.stringify(resultEvent.value))
-          // console.log(rows.value)
-          
-          renderCalendar();
-          
-
-
-        })
-        .catch(error => {
-          console.error(error)
-        })
-    }
-
-    // calendarOptions.value = {
-    //   plugins: [dayGridPlugin, interactionPlugin],
-    //   initialView: 'dayGridMonth',
-    //   dateClick: handleDateClick,
-    //   eventContent: customEventContent,
-    //   events: resultEvent.value ,
-    //   dayMaxEvents: 4,
-
-    //   dayCellContent: (arg) => {
-    //     console.log("resultEvent.value : "+JSON.stringify(resultEvent.value))
-    //     console.log("calendarEvents : "+JSON.stringify(calendarEvents.value))
-    //     console.log("순서:" + 2)
-    //     const date = arg.date;
-
-    //     const holidays = [
-    //       { month: 0, day: 1 },  
-    //       { month: 0, day: 21 }, 
-    //       { month: 0, day: 22 }, 
-    //       { month: 0, day: 23 },  
-    //       { month: 0, day: 24 },  
-    //       { month: 2, day: 1 }, 
-    //       { month: 4, day: 1 }, 
-    //       { month: 4, day: 5 }, 
-    //       { month: 4, day: 27 },
-    //       { month: 5, day: 6 },  
-    //       { month: 7, day: 15 },  
-    //       { month: 8, day: 28 },  
-    //       { month: 8, day: 29 },
-    //       { month: 8, day: 30 },
-    //       { month: 9, day: 3 },
-    //       { month: 9, day: 9 },
-    //       { month: 11, day: 25 },
-    //     ];
-
-    //     const isHoliday = holidays.some(
-    //       holiday => date.getFullYear() === 2023 && date.getMonth() === holiday.month && date.getDate() === holiday.day
-    //     );
-
-    //     const isSunday = date.getDay() === 0;
-    //     if (isHoliday || isSunday) {
-    //       return {html: `<div style="color: red;">${date.getDate()}</div>`};
-    //     } else {
-    //       return {html: `<div>${date.getDate()}</div>`};
-    //     }
-    //   },
-    // }
-
-    
-    fetchData();
+      },
+      {
+        label: '신청하기',
+        field: 'button',
+        width: '10%',
+        align: 'center',
+        slot: 'table-row'
+      },
+    ]);
 
     const originalRows = ref([
-      { id: 1, test: 0, test2: 99, createdAt: '2023-07-09'},
-      { id: 2, test: 0, test2: 99, createdAt: '2023-07-08'},
-      { id: 3, test: 0, test2: 99, createdAt: '2023-07-12'},
-      { id: 4, test: 7, test2: 99, createdAt: '2023-07-13'},
-      { id: 5, test: 1, test2: 99, createdAt: '2023-07-14'},
-      { id: 6, test: 50, test2: 50, createdAt: '2023-07-15'},
-      { id: 7, test: 16, test2: 50, createdAt: '2023-07-16'},
-      { id: 8, test: 16, test2: 50, createdAt: '2023-07-19'},
+      { id: 1, title: "4차시 틴커캐드를 활용한 3D 모델링", test: 26, test2: 26, createdAt: '2023-06-13'},
+      { id: 2, title: "3차시 메타버스 타고 떠나는 세계여행_휴대폰용", test: 25, test2: 25, createdAt: '2023-06-14'},
+      { id: 3, title: "4차시 틴커캐드를 활용한 3D 모델링", test: 14, test2: 20, createdAt: '2023-06-12'},
+      { id: 4, title: "4차시 메타버스 타고 떠나는 세계여행", test: 7, test2: 24, createdAt: '2023-06-13'},
+      { id: 5, title: "4차시 인벤이의 하루", test: 1, test2: 18, createdAt: '2023-06-14'},
+      { id: 6, title: "8차시 메타버스 타고 떠나는 세계여행", test: 50, test2: 50, createdAt: '2023-06-12'},
+      { id: 7, title: "4차시 메타버스 타고 떠나는 세계여행", test: 16, test2: 50, createdAt: '2023-06-13'},
+      { id: 8, title: "4차시 메타버스 타고 떠나는 세계여행", test: 16, test2: 50, createdAt: '2023-06-14'},
     ]);
     
     const rows = ref([...originalRows.value]);
@@ -334,30 +143,68 @@ export default {
         { title: '한글날', date: '2023-10-09' },
         { title: '성탄절', date: '2023-12-25' }
       ];
-      for (const holiday of holidays) {
-        eventsFromRows.push({
-          title: holiday.title,
-          date: holiday.date,
-          classNames: 'holiday-event',
-          textColor: 'red' 
-        });
-      }
+        for (const holiday of holidays) {
+          eventsFromRows.push({
+            title: holiday.title,
+            date: holiday.date,
+            classNames: 'holiday-event',
+            textColor: 'red' 
+          });
+        }
       return eventsFromRows;
     };
 
     const calendarEvents = ref(convertRowsToEvents(rows.value));
-    
 
     watch(rows, (newRows) => {
       calendarEvents.value = convertRowsToEvents(newRows);
     });
-    console.log(calendarEvents);
 
-    
+    const calendarOptions = {
+      plugins: [dayGridPlugin, interactionPlugin],
+      initialView: 'dayGridMonth',
+      dateClick: handleDateClick,
+      eventContent: customEventContent,
+      events: calendarEvents.value ,
+      dayMaxEvents: 4,
+
+      dayCellContent: (arg) => {
+        const date = arg.date;
+
+        const holidays = [
+          { month: 0, day: 1 },  
+          { month: 0, day: 21 }, 
+          { month: 0, day: 22 }, 
+          { month: 0, day: 23 },  
+          { month: 0, day: 24 },  
+          { month: 2, day: 1 }, 
+          { month: 4, day: 1 }, 
+          { month: 4, day: 5 }, 
+          { month: 4, day: 27 },
+          { month: 5, day: 6 },  
+          { month: 7, day: 15 },  
+          { month: 8, day: 28 },  
+          { month: 8, day: 29 },
+          { month: 8, day: 30 },
+          { month: 9, day: 3 },
+          { month: 9, day: 9 },
+          { month: 11, day: 25 },
+        ];
+
+        const isHoliday = holidays.some(
+          holiday => date.getFullYear() === 2023 && date.getMonth() === holiday.month && date.getDate() === holiday.day
+        );
+
+        const isSunday = date.getDay() === 0;
+        if (isHoliday || isSunday) {
+          return {html: `<div style="color: red;">${date.getDate()}</div>`};
+        } else {
+          return {html: `<div>${date.getDate()}</div>`};
+        }
+      },
+    }
 
     function handleDateClick(arg) {
-      selectedDate.value = arg.dateStr;
-      showModal.value = true;
       const clickedDate = arg.dateStr;  
         rows.value = originalRows.value.filter(row => row.createdAt === clickedDate);
         window.scrollTo({
@@ -402,30 +249,26 @@ export default {
         if (test === test2) {
             content = `
                 <div class="event-content" style="display: flex; justify-content: space-between;">
-                    <span class="event-title" style=" margin-right: auto; margin-left: auto; text-align:center;">마감</span>
+                    <span class="event-title" style="text-decoration: line-through; margin-left: 5px; text-overflow: "";">${arg.event.title}</span>
                 </div>`;
         } else {
             content = `
                 <div class="event-content" style="display: flex; justify-content: space-between;">
-                  <span class="event-ratio" style="margin-right: auto; margin-left: auto; text-align: center;">${(test2 - test) || ''}
-                    <span style="margin-left:2px;">자리남음</span>
-                  </span>
+                    <span class="event-title" style="margin-left: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${arg.event.title}</span>
+                    <span class="event-ratio" style="margin-right: 5px;">(${test ? test : ''}${test2 ? '/' + test2 : ''})</span>
                 </div>`;
         }
         return { html: content };
       }
     }
     return {
-            rows,
-            calendarOptions,
-            handleDateClick,
-            customEventContent,
-            calendarEvents,
-            showModal,
-            selectedDate,
-            checkedValue,
-            fetchData,
-            resultEvent
+      columns,
+      rows,
+      calendarOptions,
+      handleDateClick,
+      customEventContent,
+      calendarEvents,
+      showAll
     }
   }
 }
@@ -470,47 +313,51 @@ export default {
   height: 100px;
   overflow: hidden;
 }
+.show-all-btn {
+  display: block;
+  margin: 0 auto 10px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.show-all-btn:hover {
+  background-color: #45a049;
+}
 .modal {
   display: block;
   position: fixed;
-  top: 0;
+  z-index: 1;
+  padding-top: 100px;
   left: 0;
+  top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
 }
+
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto;
+  margin: auto;
   padding: 20px;
   border: 1px solid #888;
   width: 80%;
-  bottom:80px;
 }
-.modal-header{
-  padding: 10px;
-  text-align: center;
-}
-.modal-footer {
-  padding: 10px;
-  text-align: right;
-}
-#two-day{
-  margin-left: 5%;
-}
+
 .close {
-  position: absolute;
-  right: 15px;
-  top: 10px;
+  color: #aaaaaa;
+  float: right;
   font-size: 28px;
   font-weight: bold;
-  color: #000;
 }
+
 .close:hover,
 .close:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
 }
-
 </style>
