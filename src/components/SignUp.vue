@@ -1,8 +1,8 @@
 <template>
   <FullCalendar :options="calendarOptions"  class="calendar" @eventClick="handleDateClick"/>
   <!-- 모달창 -->
-  <div v-if="showModal" class="modal" style=" ">
-      <div class="modal-content" style="width: 350px; top: 10px; height: 70%; overflow-y: auto; ">
+  <div v-if="showModal" class="modal">
+      <div class="modal-content" style="width: 350px; height: 70%; overflow-y: auto; ">
           <div class="modal-header"><div style="font-weight: bold; text-align: left;">날짜 : {{selectedDate}} <div> 남은 {{getEventTitle()}}개 </div></div>
               <h4 style="font-family: 'Courier New', Courier, monospace; font-size: 35px; font-weight: bold;">수업 신청하기
               </h4>
@@ -29,9 +29,9 @@
                   <label for="school">기관명</label>
                     <select id="school" name="school" v-model="selectedSchool" required>
                       <option value="">기관 선택</option>
-                      <option value="school1">기관 1</option>
-                      <option value="school2">기관 2</option>
-                      <option value="school3">기관 3</option>
+                      <option value="1">기관 1</option>
+                      <option value="2">기관 2</option>
+                      <option value="3">기관 3</option>
                     </select>
 
                     <label for="teacher">교사명</label>
@@ -47,37 +47,63 @@
                     <input type="number" id="studentCount" name="studentCount" v-model="studentCount" :max="getEventMaxStudentCount()" min="1" required>  
                     <div>
                       <h3>시간대를 선택해주세요.</h3>
-                      <input style="width: auto;"  type="radio" id="time-a" name="time" value="a" v-model="selectedTime" required>
-                      <label style="display: inline;" for="time-a">09:00 ~ 11:00</label><br>
-                      <input style="width: auto;"  type="radio" id="time-b" name="time" value="b" v-model="selectedTime" required>
-                      <label style="display: inline;" for="time-b">11:00 ~ 13:00</label><br>
-                      <input style="width: auto;"  type="radio" id="time-c" name="time" value="c" v-model="selectedTime" required>
-                      <label style="display: inline;" for="time-c">14:00 ~ 16:00</label><br>
-                      <input style="width: auto;"  type="radio" id="time-d" name="time" value="d" v-model="selectedTime" required>
-                      <label style="display: inline;" for="time-d">16:00 ~ 18:00</label><br>
-                      <input style="width: auto;"  type="radio" id="time-e" name="time" value="e" v-model="selectedTime" required>
-                      <label style="display: inline;" for="time-e">18:00 ~ 20:00</label><br>
+                      <input style="width: auto;"  type="radio" id="time-a" name="time" value="10:00 ~ 11:30" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-a">10:00 ~ 11:30</label><br>
+                      <input style="width: auto;"  type="radio" id="time-b" name="time" value="13:00 ~ 14:30" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-b">13:00 ~ 14:30</label><br>
+                      <input style="width: auto;"  type="radio" id="time-c" name="time" value="14:00 ~ 15:30" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-c">14:00 ~ 15:30</label><br>
+                      <input style="width: auto;"  type="radio" id="time-d" name="time" value="14:30 ~ 16:00" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-d">14:30 ~ 16:00</label><br>
+                      <input style="width: auto;"  type="radio" id="time-e" name="time" value="15:00 ~ 16:30" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-e">15:00 ~ 16:30</label><br>
+                      <input style="width: auto;"  type="radio" id="time-f" name="time" value="16:00 ~ 17:30" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-f">16:00 ~ 17:30</label><br>
+                      <input style="width: auto;"  type="radio" id="time-g" name="time" value="16:30 ~ 18:00" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-g">16:30 ~ 18:00</label><br>
                     </div>
                 </form>
             </div>
             <div v-if="checkedValue === 'two'">
               <div style="display: flex; justify-content: space-between;">
-                <div>
-                  <h3>첫번째 신청하실 날짜입니다.</h3>
-                  <div style="margin-bottom: 10%;">날짜 : {{selectedDate}}</div>
-                  <div>
-                    <form>
-                      <h3>첫번째 신청하실 시간대를 선택해주세요.</h3>
-                      <input type="radio" name="1" value="a"> 09:00 ~ 11:00<br>
-                      <input type="radio" name="2" value="b"> 11:00 ~ 13:00<br>
-                      <input type="radio" name="3" value="c"> 14:00 ~ 16:00<br>
-                      <input type="radio" name="4" value="d"> 16:00 ~ 18:00<br>
-                      <input type="radio" name="5" value="e"> 18:00 ~ 20:00<br>
-                      <br>
-                    </form>
-                  </div>
-                </div>
-                <div style="margin-right: 10%;">
+                <form style=" margin-left: 1%; margin-right: auto;">
+                  <label for="school">기관명</label>
+                    <select id="school" name="school" v-model="selectedSchool" required>
+                      <option value="">기관 선택</option>
+                      <option value="1">기관 1</option>
+                      <option value="2">기관 2</option>
+                      <option value="3">기관 3</option>
+                    </select>
+
+                    <label for="teacher">교사명</label>
+                    <input type="text" id="teacher" name="teacher" v-model="teacherName" required>
+
+                    <label for="phone">핸드폰번호 (- 생략)</label>
+                    <input type="tel" id="phone" name="phone" v-model="phoneNumber" pattern="[0-9]{3}[0-9]{4}[0-9]{4}" required>
+
+                    <label for="email">이메일</label>
+                    <input type="email" id="email" name="email" v-model="email" required>
+
+                    <label for="studentCount">학생수</label>
+                    <input type="number" id="studentCount" name="studentCount" v-model="studentCount" :max="getEventMaxStudentCount()" min="1" required>  
+                    <div>
+                      <h3>{{selectedDate}}의 시간대를 선택해주세요.</h3>
+                      <input style="width: auto;"  type="radio" id="time-a" name="time" value="10:00 ~ 11:30" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-a">10:00 ~ 11:30</label><br>
+                      <input style="width: auto;"  type="radio" id="time-b" name="time" value="13:00 ~ 14:30" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-b">13:00 ~ 14:30</label><br>
+                      <input style="width: auto;"  type="radio" id="time-c" name="time" value="14:00 ~ 15:30" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-c">14:00 ~ 15:30</label><br>
+                      <input style="width: auto;"  type="radio" id="time-d" name="time" value="14:30 ~ 16:00" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-d">14:30 ~ 16:00</label><br>
+                      <input style="width: auto;"  type="radio" id="time-e" name="time" value="15:00 ~ 16:30" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-e">15:00 ~ 16:30</label><br>
+                      <input style="width: auto;"  type="radio" id="time-f" name="time" value="16:00 ~ 17:30" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-f">16:00 ~ 17:30</label><br>
+                      <input style="width: auto;"  type="radio" id="time-g" name="time" value="16:30 ~ 18:00" v-model="selectedTime" required>
+                      <label style="display: inline;" for="time-g">16:30 ~ 18:00</label><br>
+                    </div>
+                    <div style="margin-right: 10%; float: left;">
                   <h3>두번째 신청하실 날짜를 선택해주세요.</h3>
                   <input type="date" id="newDate" v-model="newDate" :min="minDate" @change="updateMinDate">
                   <div>
@@ -92,11 +118,14 @@
                     </form>
                   </div>
                 </div>
+                </form>
+                
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button @click="submitApplication" :disabled="!isFormValid">신청</button>
+            <button v-if="checkedValue === 'one'" @click="submitApplication" :disabled="!isFormValid">신청</button>
+            <button v-if="checkedValue === 'two'" @click="submitApplication" :disabled="!isFormValid">신청</button>
           </div>
       </div>
   </div>
@@ -112,15 +141,21 @@ import moment from 'moment'
 
 export default {
   watch: {
-    showModal(value) {
-      if (value === true) {
-        this.updateMinDate()
-      } else {
-        this.minDate = null
-      }
-    },
+  showModal(value) {
+    if (value === true) {
+      this.refreshModalData();
+    } else {
+      this.clearModalData();
+    }
   },
+  checkedValue() {
+    if (this.showModal) {
+      this.refreshModalData();
+    }
+  },
+},
   
+
   data() {
     return {
       selectedSchool: "",
@@ -128,12 +163,16 @@ export default {
       phoneNumber: "",
       email: "",
       studentCount: null,
+      curriculumSn: 1,
+      classDate:"2023-07-20",
       selectedTime: null,
       newDate: null,
       minDate: null,
       data: [], // 원본 데이터
       events: [], // 이벤트 데이터
-      curriculumSn:12
+      curriculumSna:12,
+      selectedLabels: [],
+      
       
     }
   },
@@ -151,7 +190,7 @@ export default {
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email) &&
       this.studentCount !== null &&
       this.studentCount > 0 &&
-      this.selectedTime !== null
+      this.selectedLabels.length === 2 
     );
   },
     calendarOptions() {
@@ -204,29 +243,70 @@ export default {
   },
 
   methods: {
-    submitApplication() {
-    if (!this.isFormValid) {
-      // 경고 표시 또는 필요한 동작 수행
-      alert("입력값을 확인해주세요.");
-      return;
-    }
-
-    // 신청 로직 수행
-    // ...
+    refreshModalData() {
+    this.selectedSchool = "";
+    this.teacherName = "";
+    this.phoneNumber = "";
+    this.email = "";
+    this.studentCount = null;
+    this.selectedTime = null;
+    this.newDate = null;
+    this.minDate = null;
   },
-    getEventMaxStudentCount() {
-  const eventData = this.events.find(event => event.date === this.selectedDate);
-  if (eventData) {
-    const match = eventData.title.match(/\d+/);
-    if (match) {
-      return parseInt(match[0]);
+  clearModalData() {
+    // Reset the modal data to initial values
+    this.selectedSchool = "";
+    this.teacherName = "";
+    this.phoneNumber = "";
+    this.email = "";
+    this.studentCount = null;
+    this.selectedTime = null;
+    this.newDate = null;
+    this.minDate = null;
+  },
+    onCheckboxChange() {
+    // Clear the selectedLabels array
+    this.selectedLabels = [];
+
+    // Add the selected labels to the selectedLabels array
+    if (this.checkedValue === 'one') {
+      const labels = ['time-a', 'time-b', 'time-c', 'time-d', 'time-e', 'time-f', 'time-g'];
+      for (const label of labels) {
+        const checkbox = document.getElementById(label);
+        if (checkbox.checked) {
+          this.selectedLabels.push(checkbox.value);
+        }
+      }
+    } else if (this.checkedValue === 'two') {
+      const labels = ['1', '2', '3', '4', '5'];
+      for (const label of labels) {
+        const checkbox = document.getElementsByName(label)[0];
+        if (checkbox.checked) {
+          this.selectedLabels.push(checkbox.value);
+        }
+      }
     }
-  }
-  return 0;
-},
-
-
-
+  },
+    submitApplication() {
+      axios
+        .post(`http://localhost:8081/reserve/api/v1/admin/addReservation?teacherName=${this.teacherName}&phone=${this.phoneNumber}&email=${this.email}&studentsPerGroup=${this.studentCount}&curriculumSn=${this.curriculumSn}&schoolSn=${this.selectedSchool}&classDate=${this.selectedDate}&classDate2=${this.classDate}&classSchedule=${this.selectedTime}`)
+        .then(response => {
+          console.log("aaa :"+response.data)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    },
+    getEventMaxStudentCount() {
+      const eventData = this.events.find(event => event.date === this.selectedDate);
+      if (eventData) {
+        const match = eventData.title.match(/\d+/);
+        if (match) {
+          return parseInt(match[0]);
+        }
+      }
+      return 0;
+    },
     getEventTitle() {
     const eventData = this.events.find(event => event.date === this.selectedDate);
     return eventData ? eventData.title : '';
@@ -282,7 +362,7 @@ export default {
     },
     fetchData() {
       axios
-        .post(`http://localhost:8081/reserve/api/v1/admin/findAllLocalChildren?curriculumSn=${this.curriculumSn}`)
+        .post(`http://localhost:8081/reserve/api/v1/admin/findAllLocalChildren?curriculumSn=${this.curriculumSna}`)
         .then(response => {
           var data = response.data.result.data
           this.data = data // 원본 데이터 저장
