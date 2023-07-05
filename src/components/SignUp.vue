@@ -169,6 +169,120 @@
         </div>
     </div>
   </div>
+  <!-- 표 -->
+  <div style="margin-left: auto; margin-right: auto; display: block; text-align: center; margin-top: 20px;">
+    <button class="custom-button" @click="toggleTable(1)">
+      4차시 3D프린팅과 모델링
+      <span v-if="showTable1" class="toggle-icon">&#9650;</span>
+      <span v-else class="toggle-icon">&#9660;</span>
+    </button>
+    <button class="custom-button" @click="toggleTable(2)">
+      4차시 할로코드로 만드는 사물인터넷
+      <span v-if="showTable2" class="toggle-icon">&#9650;</span>
+      <span v-else class="toggle-icon">&#9660;</span>
+    </button>
+    <button class="custom-button" @click="toggleTable(3)">
+      4차시 햄스터봇으로 만나는 자율주행
+      <span v-if="showTable3" class="toggle-icon">&#9650;</span>
+      <span v-else class="toggle-icon">&#9660;</span>
+    </button>
+
+    <table v-if="showTable1" class="table">
+      <div class="poster">
+        <div class="poster-header">
+          <h2 class="poster-title">4차시 3D프린팅과 모델링</h2>
+          <p class="poster-date">교육 대상 : 3D 모델링, 3D 프린팅</p>
+          <p class="poster-date">관련 분야 : 초등학생 / 중학생</p>
+          <p class="poster-date">준비물 : 태블릿, 인터넷</p><br>
+          <p class="poster-goal">학습목표 : <br>- 3D 프린팅의 원리를 이해한다.<br>- 틴커캐드를 이용하여 3D 모델링 작업을 한다.<br>- 틴커캐드를 이용하여 나만의 작품을 만들 수 있다.<br></p>
+        </div><br>
+        <div class="poster-description">
+          <p>
+            1차시 : 3D 프린팅이란 ?<br>
+            - 3D 프린팅이란?<br>
+            - 3D 프린팅의 원리와 활용<br>
+            - 틴커캐드 가입과 인터페이스 알아보기<br><br>
+
+            2차시 : 틴커캐드의 기본기능 익히기<br>
+            - 모델링 기초 수업 <br>
+            - 여러 가지 도형 만들어 보기<br><br>
+
+            3차시 : 글자모델링<br>
+            - 글자 모델링 해보기<br>
+            - 글자와 도형을 이용한 나만의 도장 만들어 보기<br><br>
+
+            4차시 : 나만의 컵 만들기<br>
+            - 투명도형을 이용해서 공간 설계하기<br>
+            - 투명도형을 이용한 나만의 컵 만들어 보기<br>
+          </p>
+        </div>
+      </div>
+    </table>
+
+    <table v-if="showTable2" class="table">
+      <div class="poster">
+        <div class="poster-header">
+          <h2 class="poster-title">4차시 3D프린팅과 모델링</h2>
+          <p class="poster-date">교육 대상 : 3D 모델링, 3D 프린팅</p>
+          <p class="poster-date">관련 분야 : 초등학생 / 중학생</p>
+          <p class="poster-date">준비물 : 태블릿, 인터넷</p><br>
+          <p class="poster-goal">학습목표 : <br>- 3D 프린팅의 원리를 이해한다.<br>- 틴커캐드를 이용하여 3D 모델링 작업을 한다.<br>- 틴커캐드를 이용하여 나만의 작품을 만들 수 있다.<br></p>
+        </div><br>
+        <div class="poster-description">
+          <p>
+            1차시 : 3D 프린팅이란 ?<br>
+            - 3D 프린팅이란?<br>
+            - 3D 프린팅의 원리와 활용<br>
+            - 틴커캐드 가입과 인터페이스 알아보기<br><br>
+
+            2차시 : 틴커캐드의 기본기능 익히기<br>
+            - 모델링 기초 수업 <br>
+            - 여러 가지 도형 만들어 보기<br><br>
+
+            3차시 : 글자모델링<br>
+            - 글자 모델링 해보기<br>
+            - 글자와 도형을 이용한 나만의 도장 만들어 보기<br><br>
+
+            4차시 : 나만의 컵 만들기<br>
+            - 투명도형을 이용해서 공간 설계하기<br>
+            - 투명도형을 이용한 나만의 컵 만들어 보기<br>
+          </p>
+        </div>
+      </div>
+    </table>
+
+    <table v-if="showTable3" class="table">
+      <div class="poster">
+        <div class="poster-header">
+          <h2 class="poster-title">4차시 3D프린팅과 모델링</h2>
+          <p class="poster-date">교육 대상 : 3D 모델링, 3D 프린팅</p>
+          <p class="poster-date">관련 분야 : 초등학생 / 중학생</p>
+          <p class="poster-date">준비물 : 태블릿, 인터넷</p><br>
+          <p class="poster-goal">학습목표 : <br>- 3D 프린팅의 원리를 이해한다.<br>- 틴커캐드를 이용하여 3D 모델링 작업을 한다.<br>- 틴커캐드를 이용하여 나만의 작품을 만들 수 있다.<br></p>
+        </div><br>
+        <div class="poster-description">
+          <p>
+            1차시 : 3D 프린팅이란 ?<br>
+            - 3D 프린팅이란?<br>
+            - 3D 프린팅의 원리와 활용<br>
+            - 틴커캐드 가입과 인터페이스 알아보기<br><br>
+
+            2차시 : 틴커캐드의 기본기능 익히기<br>
+            - 모델링 기초 수업 <br>
+            - 여러 가지 도형 만들어 보기<br><br>
+
+            3차시 : 글자모델링<br>
+            - 글자 모델링 해보기<br>
+            - 글자와 도형을 이용한 나만의 도장 만들어 보기<br><br>
+
+            4차시 : 나만의 컵 만들기<br>
+            - 투명도형을 이용해서 공간 설계하기<br>
+            - 투명도형을 이용한 나만의 컵 만들어 보기<br>
+          </p>
+        </div>
+      </div>
+    </table>
+  </div>
 </template>
 
 <script>
@@ -218,6 +332,9 @@ export default {
       countdownInterval: null,
       buttonDisabled: true,
       emailclear : false,
+      showTable1: false,
+      showTable2: false,
+      showTable3: false,
     }
   },
 
@@ -313,6 +430,16 @@ export default {
   },
 
   methods: {
+     toggleTable(tableNumber) {
+      if (tableNumber === 1) {
+        this.showTable1 = !this.showTable1;
+      } else if (tableNumber === 2) {
+        this.showTable2 = !this.showTable2;
+      } else if (tableNumber === 3) {
+        this.showTable3 = !this.showTable3;
+      }
+    }
+  ,
     formatCountdown() {
       const minutes = Math.floor(this.countdown / 60);
       const seconds = this.countdown % 60;
@@ -499,6 +626,7 @@ export default {
         const data = response.data.result.data;
         const dates = Object.keys(data).map((date) => date.split('T')[0]); // Extract date without time
         const sortedDates = dates.sort((a, b) => new Date(a) - new Date(b)); // Sort dates in ascending order
+        // console.log("response.data :" + JSON.stringify(response.data) )
         this.dateOptions = sortedDates.map((date) => ({
           value: date,
           label: date,
@@ -704,4 +832,83 @@ input:invalid {
 .email-button:hover {
   background-color: #45a049;
 }
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1em;
+
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+.poster {
+  width: 300px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  display: block;
+  margin-top : 30px;
+}
+
+.poster-header {
+  text-align: center;
+  margin-bottom: 10px;
+  
+}
+
+.poster-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.poster-date {
+  font-size: 16px;
+  color: #888;
+}
+.poster-goal{
+  font-size: 16px;
+  color: #2c2c2c;
+  text-align: left;
+
+}
+
+.poster-description {
+  text-align: justify;
+  line-height: 1.5;
+  color: #555;
+  
+}.custom-button {
+  display: inline-block;
+  background-color: #3498db;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.custom-button:hover {
+  background-color: #2980b9;
+}
+
+.toggle-icon {
+  margin-left: 5px;
+}
+
 </style>
