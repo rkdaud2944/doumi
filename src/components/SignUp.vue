@@ -27,11 +27,11 @@
           방문 유형
         </h3>
         <label for="one-day" style="margin-left: 2px;">
-          1일 (4시간 1번 수업)
+          1일 (4차시 1번 수업)
           <input style="width: auto; margin: 5px;" type="radio" id="one-day" value="one" v-model="checkedValue" @change="onCheckboxChange" />
         </label>
         <label for="two-day" style="margin-left: 2px;">
-          2일 (2시간 2번 수업)
+          2일 (2차시 2번 수업)
           <input style="width: auto; margin: 5px;" type="radio" id="two-day" value="two" v-model="checkedValue" @change="onCheckboxChange" />
         </label>
       </div>
@@ -170,24 +170,9 @@
     </div>
   </div>
   <!-- 표 -->
-  <div style="margin-left: auto; margin-right: auto; display: block; text-align: center; margin-top: 20px;">
-    <button class="custom-button" @click="toggleTable(1)">
-      4차시 3D프린팅과 모델링
-      <span v-if="showTable1" class="toggle-icon">&#9650;</span>
-      <span v-else class="toggle-icon">&#9660;</span>
-    </button>
-    <button class="custom-button" @click="toggleTable(2)">
-      4차시 할로코드로 만드는 사물인터넷
-      <span v-if="showTable2" class="toggle-icon">&#9650;</span>
-      <span v-else class="toggle-icon">&#9660;</span>
-    </button>
-    <button class="custom-button" @click="toggleTable(3)">
-      4차시 햄스터봇으로 만나는 자율주행
-      <span v-if="showTable3" class="toggle-icon">&#9650;</span>
-      <span v-else class="toggle-icon">&#9660;</span>
-    </button>
+  <div style="margin-left: auto; margin-right: auto;  text-align:center; margin-top: 20px; margin-bottom: 20px;">
 
-    <table v-if="showTable1" class="table">
+  <h2>아래 과목을 참고하고, 위 달력을 클릭하여 남은 자리를 참고하고 예약하세요.</h2>
       <div class="poster">
         <div class="poster-header">
           <h2 class="poster-title">4차시 3D프린팅과 모델링</h2>
@@ -217,9 +202,36 @@
           </p>
         </div>
       </div>
-    </table>
 
-    <table v-if="showTable2" class="table">
+      <div style="margin-left: 10px; margin-right: 10px;" class="poster">
+        <div class="poster-header">
+          <h2 class="poster-title">4차시 3D프린팅과 모델링</h2>
+          <p class="poster-date">교육 대상 : 3D 모델링, 3D 프린팅</p>
+          <p class="poster-date">관련 분야 : 초등학생 / 중학생</p>
+          <p class="poster-date">준비물 : 태블릿, 인터넷</p><br>
+          <p class="poster-goal">학습목표 : <br>- 3D 프린팅의 원리를 이해한다.<br>- 틴커캐드를 이용하여 3D 모델링 작업을 한다.<br>- 틴커캐드를 이용하여 나만의 작품을 만들 수 있다.<br></p>
+        </div><br>
+        <div class="poster-description">
+          <p>
+            1차시 : 3D 프린팅이란 ?<br>
+            - 3D 프린팅이란?<br>
+            - 3D 프린팅의 원리와 활용<br>
+            - 틴커캐드 가입과 인터페이스 알아보기<br><br>
+
+            2차시 : 틴커캐드의 기본기능 익히기<br>
+            - 모델링 기초 수업 <br>
+            - 여러 가지 도형 만들어 보기<br><br>
+
+            3차시 : 글자모델링<br>
+            - 글자 모델링 해보기<br>
+            - 글자와 도형을 이용한 나만의 도장 만들어 보기<br><br>
+
+            4차시 : 나만의 컵 만들기<br>
+            - 투명도형을 이용해서 공간 설계하기<br>
+            - 투명도형을 이용한 나만의 컵 만들어 보기<br>
+          </p>
+        </div>
+      </div>
       <div class="poster">
         <div class="poster-header">
           <h2 class="poster-title">4차시 3D프린팅과 모델링</h2>
@@ -249,39 +261,6 @@
           </p>
         </div>
       </div>
-    </table>
-
-    <table v-if="showTable3" class="table">
-      <div class="poster">
-        <div class="poster-header">
-          <h2 class="poster-title">4차시 3D프린팅과 모델링</h2>
-          <p class="poster-date">교육 대상 : 3D 모델링, 3D 프린팅</p>
-          <p class="poster-date">관련 분야 : 초등학생 / 중학생</p>
-          <p class="poster-date">준비물 : 태블릿, 인터넷</p><br>
-          <p class="poster-goal">학습목표 : <br>- 3D 프린팅의 원리를 이해한다.<br>- 틴커캐드를 이용하여 3D 모델링 작업을 한다.<br>- 틴커캐드를 이용하여 나만의 작품을 만들 수 있다.<br></p>
-        </div><br>
-        <div class="poster-description">
-          <p>
-            1차시 : 3D 프린팅이란 ?<br>
-            - 3D 프린팅이란?<br>
-            - 3D 프린팅의 원리와 활용<br>
-            - 틴커캐드 가입과 인터페이스 알아보기<br><br>
-
-            2차시 : 틴커캐드의 기본기능 익히기<br>
-            - 모델링 기초 수업 <br>
-            - 여러 가지 도형 만들어 보기<br><br>
-
-            3차시 : 글자모델링<br>
-            - 글자 모델링 해보기<br>
-            - 글자와 도형을 이용한 나만의 도장 만들어 보기<br><br>
-
-            4차시 : 나만의 컵 만들기<br>
-            - 투명도형을 이용해서 공간 설계하기<br>
-            - 투명도형을 이용한 나만의 컵 만들어 보기<br>
-          </p>
-        </div>
-      </div>
-    </table>
   </div>
 </template>
 
@@ -332,9 +311,6 @@ export default {
       countdownInterval: null,
       buttonDisabled: true,
       emailclear : false,
-      showTable1: false,
-      showTable2: false,
-      showTable3: false,
     }
   },
 
@@ -479,7 +455,9 @@ export default {
           this.showEmailInput = false;
           this.emailclear = true;
           clearInterval(this.countdownInterval);
+          return
         }
+
         alert("인증번호를 다시 한번 확인해주세요.");
         console.log('aaa :' + response.data.result.title)
       })
@@ -530,6 +508,7 @@ export default {
         )
         .then((response) => {
           console.log('aaa :' + response.data)
+          this.showModal = false;
         })
         .catch((error) => {
           console.error(error)
@@ -547,14 +526,17 @@ export default {
         )
         .then((response) => {
           console.log('aaa :' + response.data)
+          this.showModal = false;
         })
         .catch((error) => {
           console.error(error)
         })
+
       }
+      else {
       alert("기입되지 않은 항목이 있습니다.")
       return
-
+      }
     },
 
     getEventMaxStudentCount() {
@@ -850,16 +832,15 @@ input:invalid {
   font-weight: bold;
 }
 .poster {
-  width: 300px;
-  background-color: #fff;
+  width: 26vw;
+  min-width: 300px;
+  background-color: #f3f3f3;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   padding: 20px;
-  margin-left: auto;
-  margin-right: auto;
   text-align: center;
-  display: block;
   margin-top : 30px;
+  display:inline-block;
 }
 
 .poster-header {
