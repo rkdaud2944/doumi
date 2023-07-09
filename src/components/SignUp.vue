@@ -41,12 +41,20 @@
         <div v-if="checkedValue === 'one'">
           <form style="margin-left: 1%; margin-right: auto;">
             <label for="school">기관명</label>
-            <select id="school" name="school" v-model="selectedSchool" required>
+            <!-- <select id="school" name="school" v-model="selectedSchool" required>
               <option value="">기관 선택</option>
               <option value="1">기관 1</option>
               <option value="2">기관 2</option>
               <option value="3">기관 3</option>
-            </select>
+            </select> -->
+            
+            
+            <input type="text" v-model="searchText" placeholder="기관 검색">
+            <div v-for="school in filteredSchools" :key="school.sn" @click="selectSchool(school)">
+              {{ school.schoolName }}
+            </div>
+            <div v-if="selectedSchool">선택된 기관: {{ selectedSchool.schoolName }} (번호: {{ selectedSchool.sn }})</div>
+  
 
             <label for="teacher">교사명</label>
             <input type="text" id="teacher" name="teacher" v-model="teacherName" required />
@@ -273,24 +281,9 @@ import axios from 'axios'
 import moment from 'moment'
 
 export default {
-  watch: {
-    showModal(value) {
-      if (value === true) {
-        this.refreshModalData()
-      } else {
-        this.clearModalData()
-      }
-    },
-    checkedValue() {
-      if (this.showModal) {
-        this.refreshModalData()
-      }
-    },
-  },
-
   data() {
     return {
-      selectedSchool: '',
+      // selectedSchool: '',
       teacherName: '',
       phoneNumber: '',
       email: '',
@@ -311,6 +304,9 @@ export default {
       countdownInterval: null,
       buttonDisabled: true,
       emailclear : false,
+      schools: [],
+      searchText: '',
+      selectedSchool: null
     }
   },
 
@@ -318,10 +314,19 @@ export default {
     FullCalendar,
   },
 
+  created() {
+    this.fetchSchools()
+  },
+
+  beforeMount() {
+    this.fetchData()
+  },
+
   computed: {
     showCountdown() {
-    return this.showEmailInput && this.countdown > 0;
-  },
+      return this.showEmailInput && this.countdown > 0;
+    },
+
     isFormValid() {
       return (
         this.selectedSchool !== '' &&
@@ -333,6 +338,7 @@ export default {
         this.selectedTimes.length === 2
       )
     },
+
     isFormValid2() {
       return (
         this.selectedSchool !== '' &&
@@ -344,6 +350,7 @@ export default {
         this.selectedTimes.length === 1
       )
     },
+
     calendarOptions() {
       return {
         plugins: [dayGridPlugin, interactionPlugin],
@@ -388,6 +395,7 @@ export default {
         },
       }
     },
+
     timeOptions() {
       return [
         { id: 'time-a', label: '10:00 ~ 11:30' },
@@ -399,14 +407,18 @@ export default {
         { id: 'time-g', label: '16:30 ~ 18:00' },
       ]
     },
-  },
 
-  beforeMount() {
-    this.fetchData()
+    filteredSchools() {
+      if (this.searchText === '') {
+        return this.schools;
+      } else {
+        return this.schools.filter(school => school.schoolName.includes(this.searchText));
+      }
+    }
   },
 
   methods: {
-     toggleTable(tableNumber) {
+    toggleTable(tableNumber) {
       if (tableNumber === 1) {
         this.showTable1 = !this.showTable1;
       } else if (tableNumber === 2) {
@@ -414,13 +426,14 @@ export default {
       } else if (tableNumber === 3) {
         this.showTable3 = !this.showTable3;
       }
-    }
-  ,
+    },
+
     formatCountdown() {
       const minutes = Math.floor(this.countdown / 60);
       const seconds = this.countdown % 60;
       return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     },
+
     sendEmail() {
       axios
       .get(
@@ -443,7 +456,8 @@ export default {
       .catch((error) => {
         console.error(error)
       })
-     },
+    },
+
     emailSecurity() {
       axios
       .get(
@@ -465,15 +479,18 @@ export default {
         console.error(error)
       })
     },
+
     displaySelectedDateTitle() {
       const eventData = this.events.find((event) => event.date === this.selectedSecondDate)
       const match = eventData ? eventData.title.match(/\d+/) : null
       this.selectedDateTitle = match ? match[0] : ''
     },
+
     getSelectedDateTitle() {
       const eventData = this.events.find((event) => event.date === this.selectedSecondDate)
       return eventData ? eventData.title : ''
     },
+
     refreshModalData() {
       this.selectedSchool = ''
       this.teacherName = ''
@@ -486,6 +503,7 @@ export default {
       this.showEmailInput = false;
       this.buttonDisabled = true;
     },
+
     clearModalData() {
       // Reset the modal data to initial values
       this.selectedSchool = ''
@@ -549,10 +567,12 @@ export default {
       }
       return 0
     },
+
     getEventTitle() {
       const eventData = this.events.find((event) => event.date === this.selectedDate)
       return eventData ? eventData.title : ''
     },
+
     convertDataToEvents(data) {
       const events = Object.entries(data).map(([date, value]) => {
         let startDate = moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD')
@@ -601,6 +621,7 @@ export default {
 
       return events
     },
+    
     fetchData() {
       axios
       .post(`http://localhost:8081/reserve/api/v1/admin/findAllLocalChildren?curriculumSn=${this.curriculumSna}`)
@@ -651,8 +672,36 @@ export default {
           })
       }
     },
+    
+    fetchSchools() {
+      axios.get('http://localhost:8081/reserve/api/v1/admin/findSchool') // 실제 API 주소를 입력해야 합니다.
+        .then(response => {
+          this.schools = response.data.result.msg
+        })
+    },
+
+    selectSchool(school) {
+      this.selectedSchool = school
+    }
 
 
+  },
+  
+  watch: {
+    showModal(value) {
+      if (value === true) {
+        this.refreshModalData()
+      } else {
+        this.clearModalData()
+      }
+    },
+
+    checkedValue() {
+      if (this.showModal) {
+        this.refreshModalData()
+      }
+    },
+    
   },
 
   setup() {
