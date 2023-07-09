@@ -44,9 +44,9 @@
             <label for="school">기관명</label>
               <div class="dropdown-container">
                 <input type="text" v-model="searchText" @input="filterData" @focus="showDropdown = false" placeholder="검색어를 입력하세요" />
-                <button class="dropdown-toggle" @click="toggleDropdown">
+                <div class="dropdown-toggle" @click="toggleDropdown">
                   <i class="arrow-icon" :class="{'arrow-up': showDropdown, 'arrow-down': !showDropdown}"></i>
-                </button>
+                </div>
                 <ul class="dropdown-menu" v-show="!showDropdown">
                   <li v-for="item in filteredData" :key="item.sn" @click="selectData(item)">
                     {{ item.schoolName }}
@@ -103,9 +103,9 @@
                 <label for="school">기관명</label>
                   <div class="dropdown-container">
                     <input type="text" v-model="searchText" @input="filterData" @focus="showDropdown = false" placeholder="검색어를 입력하세요" />
-                    <button class="dropdown-toggle" @click="toggleDropdown">
+                    <div class="dropdown-toggle" @click="toggleDropdown">
                       <i class="arrow-icon" :class="{'arrow-up': showDropdown, 'arrow-down': !showDropdown}"></i>
-                    </button>
+                    </div>
                     <ul class="dropdown-menu" v-show="!showDropdown">
                       <li v-for="item in filteredData" :key="item.sn" @click="selectData(item)">
                         {{ item.schoolName }}
@@ -768,6 +768,7 @@ export default {
 }
 
 .dropdown-toggle {
+  display: inline-block;
   width: 10%;
   background-color: transparent;
   border: none;
