@@ -138,28 +138,29 @@
                     </label>
                     
                   </div>
-                  <div>
-                    <h3>두번째 신청하실 날짜를 선택해주세요.</h3>
-                    <select id="second-date" name="second-date" v-model="selectedSecondDate" @change="displaySelectedDateTitle" required>
-                      <option value="">날짜 선택</option>
-                      <option v-for="dateOption in dateOptions" :key="dateOption.value" :value="dateOption.value">
-                        {{ dateOption.label }}
-                      </option>
-                    </select>
-                    <p v-if="selectedSecondDate !== '' && selectedDateTitle !== ''">
-                      {{ selectedDateTitle }} 남음
-                    </p>
-                  </div>
+                    <div>
+                        <h3>두번째 신청하실 날짜를 선택해주세요.</h3>
+                        <select id="second-date" name="second-date" v-model="selectedSecondDate" @change="displaySelectedDateTitle" required>
+                            <option value="">날짜 선택</option>
+                            <option v-for="dateOption in filteredDateOptions" :key="dateOption.value" :value="dateOption.value">
+                            {{ dateOption.label }}
+                            </option>
+                        </select>
+                        <p v-if="selectedSecondDate !== '' && selectedDateTitle !== ''">
+                            {{ selectedDateTitle }} 남음
+                        </p>
+                    </div>
 
-                    <!-- <div>
-                      <h3>두번째 신청하실 시간대를 선택해주세요.</h3>
-                      <label style="display: block" v-for="time in timeOptions" :key="time.id">
-                        <input style="width: auto;" type="checkbox" :id="time.id" :value="time.label" v-model="selectedTimes"
-                          :disabled="selectedTimes.length >= 1 && !selectedTimes.includes(time.label)" required />
-                        {{ time.label }}
-                      </label>
-                      <br>
-                    </div> -->
+                    <div>
+                        <h3>두번째 신청하실 시간대를 선택해주세요.</h3>
+
+                    <label style="display: block" v-for="time in timeOptions" :key="time.id">
+                      <input style="width: auto;" type="checkbox" :id="time.id" :value="time.label" v-model="selectedTimes2"
+                        :disabled="selectedTimes2.length >= 1 && !selectedTimes2.includes(time.label)" required />
+                      {{ time.label }}
+                    </label>
+                    
+                  </div>
                   <div class="modal-footer">
                     <button type="submit" v-if="checkedValue === 'two'" @click="twodayclick">신청</button>
                   </div>
@@ -298,6 +299,7 @@ export default {
       curriculumSn: 1,
       classDate: '2023-07-20',
       selectedTimes: [],
+      selectedTimes2: [],
       emailSecuritypw : '',
       data: [], // 원본 데이터
       events: [], // 이벤트 데이터
@@ -311,6 +313,7 @@ export default {
       countdownInterval: null,
       buttonDisabled: true,
       emailclear : false,
+
     }
   },
 
@@ -319,6 +322,13 @@ export default {
   },
 
   computed: {
+    filteredDateOptions() {
+    if (this.selectedDate === '') {
+      return []; // 선택된 첫번째 날짜가 없을 경우 빈 배열 반환
+    }
+    // 선택된 첫번째 날짜 이후의 날짜들만 필터링하여 반환
+    return this.dateOptions.filter(dateOption => dateOption.value > this.selectedDate);
+  },
     showCountdown() {
     return this.showEmailInput && this.countdown > 0;
   },
@@ -481,6 +491,7 @@ export default {
       this.email = ''
       this.studentCount = null
       this.selectedTimes = []
+      this.selectedTimes2 = []
       clearInterval(this.countdownInterval);
       this.countdown = 300;
       this.showEmailInput = false;
@@ -494,6 +505,7 @@ export default {
       this.email = ''
       this.studentCount = null
       this.selectedTimes = []
+      this.selectedTimes2 = []
       clearInterval(this.countdownInterval);
       this.countdown = 300;
       this.showEmailInput = false;
@@ -514,8 +526,10 @@ export default {
           console.error(error)
         })
       }
+      else {
       alert("기입되지 않은 항목이 있습니다.")
       return
+      }
     },
 
     twodayclick() {
