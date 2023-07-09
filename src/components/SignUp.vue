@@ -1,5 +1,4 @@
 <template>
-    
     <FullCalendar :options="calendarOptions" class="calendar" @eventClick="handleDateClick" />
     <!-- 모달창 -->
     <div v-if="showModal" class="modal">
@@ -52,10 +51,10 @@
   
               <label for="school">기관명</label>
                 <div class="dropdown-container">
-                  <input type="text" v-model="searchText" @input="filterData" @focus="showDropdown = false" placeholder="검색어를 입력하세요" />
-                  <button class="dropdown-toggle" @click="toggleDropdown">
+                  <input type="text" v-model="searchText" ref="schoolInput" @input="filterData" @focus="showDropdown = false" placeholder="검색어를 입력하세요" />
+                  <div class="dropdown-toggle" @click="toggleDropdown">
                     <i class="arrow-icon" :class="{'arrow-up': showDropdown, 'arrow-down': !showDropdown}"></i>
-                  </button>
+                  </div>
                   <ul class="dropdown-menu" v-show="!showDropdown">
                     <li v-for="item in filteredData" :key="item.sn" @click="selectData(item)">
                       {{ item.schoolName }}
@@ -64,15 +63,15 @@
               </div>
     
               <label for="teacher">교사명</label>
-              <input type="text" id="teacher" name="teacher" v-model="teacherName" required />
+              <input type="text" id="teacher" name="teacher" ref="teacherInput" v-model="teacherName" required />
   
               <label for="phone">핸드폰번호 (- 생략)</label>
-              <input type="tel" id="phone" name="phone" v-model="phoneNumber" pattern="[0-9]{3}[0-9]{4}[0-9]{4}" required />
+              <input type="tel" id="phone" name="phone" ref="phoneInput" v-model="phoneNumber" pattern="[0-9]{3}[0-9]{4}[0-9]{4}" required />
   
               
               <label for="email">이메일</label>
               <div style="display: flex;">
-              <input type="email" id="email" name="email" v-model="email" required />
+                      <input type="email" id="email" name="email" ref="emailInput" v-model="email" required />
               <div class="email-button" @click="sendEmail" v-show="email && buttonDisabled" :style="{cursor: email ? 'pointer' : 'default'}">
                   <p style="font-size: 10px; line-height: 25px;">인증</p>
               </div>
@@ -81,7 +80,7 @@
           
               <div style="display: flex;" v-if="showEmailInput" >
               <label for="text">인증번호</label>
-              <input type="text" v-model="emailSecuritypw" required />
+                      <input type="text" ref="securitypwInput" v-model="emailSecuritypw" required />
               <div class="email-button" @click="emailSecurity">
                   <p style="font-size: 6px; line-height: 25px; margin: 0px;">Check</p>
               </div>
@@ -90,7 +89,7 @@
               <p v-if="emailclear">인증 완료</p>
   
               <label for="studentCount">학생수</label>
-              <input type="number" id="studentCount" name="studentCount" v-model="studentCount" :max="getEventMaxStudentCount()" min="1" required />
+              <input type="number" id="studentCount" name="studentCount" ref="studentCountInput" v-model="studentCount" :max="getEventMaxStudentCount()" min="1" required />
               <div><br />
                 <h3>시간대를 선택해주세요.</h3><br />
                 <label style="display: block" v-for="time in timeOptions" :key="time.id">
@@ -100,7 +99,7 @@
                 </label>
               </div>
               <div class="modal-footer">
-                  <button type="submit" v-if="checkedValue === 'one'" @click="onedayclick">신청</button>
+                <div v-if="checkedValue === 'one'" @click="onedayclick">신청</div>
               </div>
             </form>
           </div>
@@ -109,12 +108,20 @@
           <div v-if="checkedValue === 'two'">
               <div style="display: flex; justify-content: space-between;">
                 <form @submit.prevent="onSubmit" style=" margin-left: 1%; margin-right: auto;">
+                    <label for="school">과목명</label>
+                
+                    <select id="school" name="school" v-model="curriculumSn" required>
+                        <option value="1">3D프린팅과 모델링</option>
+                        <option value="2">할로코드로 만드는 사물인터넷</option>
+                        <option value="3">햄스터봇으로 만나는 자율주행</option>
+                    </select>
+
                   <label for="school">기관명</label>
                     <div class="dropdown-container">
-                      <input type="text" v-model="searchText" @input="filterData" @focus="showDropdown = false" placeholder="검색어를 입력하세요" />
-                      <button class="dropdown-toggle" @click="toggleDropdown">
+                      <input type="text" v-model="searchText" ref="schoolInputTwoDay" @input="filterData" @focus="showDropdown = false" placeholder="검색어를 입력하세요" />
+                      <div class="dropdown-toggle" @click="toggleDropdown">
                         <i class="arrow-icon" :class="{'arrow-up': showDropdown, 'arrow-down': !showDropdown}"></i>
-                      </button>
+                      </div>
                       <ul class="dropdown-menu" v-show="!showDropdown">
                         <li v-for="item in filteredData" :key="item.sn" @click="selectData(item)">
                           {{ item.schoolName }}
@@ -122,13 +129,13 @@
                       </ul>
                   </div>
                     <label for="teacher">교사명</label>
-                    <input type="text" id="teacher" name="teacher" v-model="teacherName" required>
+                    <input type="text" id="teacher" name="teacher" ref="teacherInputTwoDay" v-model="teacherName" required>
                     <label for="phone">핸드폰번호 (- 생략)</label>
-                    <input type="tel" id="phone" name="phone" v-model="phoneNumber" pattern="[0-9]{3}[0-9]{4}[0-9]{4}" required>
+                    <input type="tel" id="phone" name="phone" ref="phoneInputTwoDay" v-model="phoneNumber" pattern="[0-9]{3}[0-9]{4}[0-9]{4}" required>
                     
                     <label for="email">이메일</label>
                     <div style="display: flex;">
-                      <input type="email" id="email" name="email" v-model="email" required />
+                      <input type="email" id="email" name="email" ref="emailInputTwoDay" v-model="email" required />
                       <div class="email-button" @click="sendEmail" v-show="email && buttonDisabled" :style="{cursor: email ? 'pointer' : 'default'}">
                         <p style="font-size: 10px; line-height: 25px;">인증</p>
                       </div>
@@ -137,7 +144,7 @@
                   
                     <div style="display: flex;" v-if="showEmailInput" >
                       <label for="text">인증번호</label>
-                      <input type="text" v-model="emailSecuritypw" required />
+                      <input type="text" ref="securitypwInputTwoDay" v-model="emailSecuritypw" required />
                       <div class="email-button" @click="emailSecurity">
                         <p style="font-size: 6px; line-height: 25px; margin: 0px;">Check</p>
                       </div>
@@ -147,12 +154,12 @@
                     
   
                     <label for="studentCount">학생수</label>
-                    <input type="number" id="studentCount" name="studentCount" v-model="studentCount" :max="getEventMaxStudentCount()" min="1" required>  
+                    <input type="number" id="studentCount" name="studentCount" ref="studentCountInputTwoDay" v-model="studentCount" :max="getEventMaxStudentCount()" min="1" required>  
                     <div>
                       <h3>{{selectedDate}}에 방문하시는 시간대를 선택해주세요.</h3>
   
                       <label style="display: block" v-for="time in timeOptions" :key="time.id">
-                        <input style="width: auto;" type="checkbox" :id="time.id" :value="time.label" v-model="selectedTimes"
+                        <input style="width: auto;" type="checkbox" :id="time.id" :value="time.label" ref="selectTimesTwoDay1" v-model="selectedTimes"
                           :disabled="selectedTimes.length >= 1 && !selectedTimes.includes(time.label)" required />
                         {{ time.label }}
                       </label>
@@ -160,7 +167,7 @@
                     </div>
                       <div>
                           <h3>두번째 신청하실 날짜를 선택해주세요.</h3>
-                          <select id="second-date" name="second-date" v-model="selectedSecondDate" @change="displaySelectedDateTitle" required>
+                          <select id="second-date" name="second-date" ref="twoDay" v-model="selectedSecondDate" @change="displaySelectedDateTitle" required>
                               <option value="">날짜 선택</option>
                               <option v-for="dateOption in filteredDateOptions" :key="dateOption.value" :value="dateOption.value">
                               {{ dateOption.label }}
@@ -175,7 +182,7 @@
                           <h3>두번째 신청하실 시간대를 선택해주세요.</h3>
   
                       <label style="display: block" v-for="time in timeOptions" :key="time.id">
-                        <input style="width: auto;" type="checkbox" :id="time.id" :value="time.label" v-model="selectedTimes2"
+                        <input style="width: auto;" type="checkbox" :id="time.id" :value="time.label" ref="selectTimesTwoDay1" v-model="selectedTimes2"
                           :disabled="selectedTimes2.length >= 1 && !selectedTimes2.includes(time.label)" required />
                         {{ time.label }}
                       </label>
@@ -329,6 +336,8 @@
               selectedData: null, // 선택된 데이터
               showDropdown: true, // 드롭다운 메뉴 표시 여부
               searchText: '', // 검색어
+              api:'http://localhost:8081', // 로컬 테스트용
+              // api:'http://43.202.4.224:8081', // 실사용 서버 주소
           }
       },
   
@@ -354,30 +363,6 @@
           },
           showCountdown() {
               return this.showEmailInput && this.countdown > 0;
-          },
-  
-          isFormValid() {
-              return (
-                  this.selectedSchool !== '' &&
-                  /^[가-힣]{2,4}$/.test(this.teacherName) &&
-                  /^[0-9]{3}[0-9]{4}[0-9]{4}$/.test(this.phoneNumber) &&
-                  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email) &&
-                  this.studentCount !== null &&
-                  this.studentCount > 0 &&
-                  this.selectedTimes.length === 2
-              )
-          },
-  
-          isFormValid2() {
-              return (
-                  this.selectedSchool !== '' &&
-                  /^[가-힣]{2,4}$/.test(this.teacherName) &&
-                  /^[0-9]{3}[0-9]{4}[0-9]{4}$/.test(this.phoneNumber) &&
-                  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email) &&
-                  this.studentCount !== null &&
-                  this.studentCount > 0 &&
-                  this.selectedTimes.length === 1
-              )
           },
   
           calendarOptions() {
@@ -459,7 +444,7 @@
           sendEmail() {
               axios
               .get(
-              `http://localhost:8081/sendVerification?email=${this.email}`
+            `${this.api}/sendVerification?email=${this.email}`
               )
               .then((response) => {
                   this.showEmailInput = true;
@@ -473,7 +458,7 @@
                           this.showModal = false; // 모달 닫기
                       }
                   }, 1000);
-                  console.log('aaa :' + response.data)
+          console.log(response.data)
               })
               .catch((error) => {
                   console.error(error)
@@ -483,7 +468,7 @@
           emailSecurity() {
               axios
               .get(
-              `http://localhost:8081/verifyEmail?email=${this.email}&code=${this.emailSecuritypw}`
+            `${this.api}/verifyEmail?email=${this.email}&code=${this.emailSecuritypw}`
               )
               .then((response) => {
                   if (response.data.result.title == "인증성공") {
@@ -493,8 +478,8 @@
                       clearInterval(this.countdownInterval);
                       return
                   }
+  
                   alert("인증번호를 다시 한번 확인해주세요.");
-                  console.log('aaa :' + response.data.result.title)
               })
               .catch((error) => {
                   console.error(error)
@@ -513,7 +498,7 @@
           },
   
           refreshModalData() {
-              this.selectedSchool = ''
+        this.selectedSchool = null
               this.teacherName = ''
               this.phoneNumber = ''
               this.email = ''
@@ -524,11 +509,12 @@
               this.countdown = 300;
               this.showEmailInput = false;
               this.buttonDisabled = true;
+          this.searchText = ''
           },
   
           clearModalData() {
           // Reset the modal data to initial values
-              this.selectedSchool = ''
+        this.selectedSchool = null
               this.teacherName = ''
               this.phoneNumber = ''
               this.email = ''
@@ -539,46 +525,204 @@
               this.countdown = 300;
               this.showEmailInput = false;
               this.buttonDisabled = true;
+        this.searchText = ''
           },
   
+      // 유효성 검사
+      validateFormOneDay() {
+        // 학교명(기관명) 유효성 검사
+        if (!this.searchText.trim()) {
+          alert('기관명을 입력해주세요.');
+          this.$refs.schoolInput.focus();
+          return false;
+        }
+        
+        // 학교명(기관명) 수정 검증
+        let validSchool = this.schoolData.find((item) =>
+          item.schoolName === this.searchText
+        );
+        if (!validSchool) {
+          alert('입력하신 기관명은 유효하지 않습니다. 목록에서 선택해주세요. \n해당기관이 리스트에 없으면 아래 번호로 문의주세요. \n * 인천미래채움 운영센터: 070-7726-3346/5256');
+          this.$refs.schoolInput.focus();
+          return false;
+        }
+  
+        // 만약 학교명(기관명)이 유효하다면, 선택된 학교의 sn을 다시 설정합니다.
+        this.selectedSchool = validSchool.sn;
+  
+        // 교사명 유효성 검사
+        if (!this.teacherName.trim()) {
+          alert('교사명을 입력해주세요.');
+          this.$refs.teacherInput.focus();
+          return false;
+        }
+  
+        // 핸드폰번호 유효성 검사
+        const phoneRegEx = /^[0-9]{3}[0-9]{4}[0-9]{4}$/;
+        if (!this.phoneNumber.trim() || !phoneRegEx.test(this.phoneNumber)) {
+          alert('핸드폰번호 11자리를 입력해주세요. ("-")는 생략해주세요.');
+          this.$refs.phoneInput.focus();
+          return false;
+        }
+  
+        // 이메일 유효성 검사
+        if (!this.email.trim() || !this.email.includes('@')) {
+          alert('유효한 이메일을 입력해주세요.');
+          this.$refs.emailInput.focus();
+          return false;
+        }
+  
+        // 이메일 인증번호 유효성 검사
+        if (!this.emailclear) {
+          alert('이메일 인증을 완료해주세요.');
+          // this.$refs.securitypwInput.focus();
+          return false;
+        }
+  
+        // 학생수 유효성 검사
+        if (!this.studentCount || this.studentCount < 1) {
+          alert('학생수는 1명 이상이어야 합니다.');
+          this.$refs.studentCountInput.focus();
+          return false;
+        }
+  
+        // 시간대 선택 유효성 검사
+        if (this.selectedTimes.length !== 2) {
+          alert('시간대를 반드시 두 개 선택해주세요.');
+          return false;
+        }
+  
+  
+        return true;
+      },
+  
+      validateFormTwoDay() {
+        // 기관명 유효성 검사
+        if (!this.searchText.trim()) {
+          alert('기관명을 입력해주세요.');
+          this.$refs.schoolInputTwoDay.focus();
+          return false;
+        }
+        
+        // 기관명 수정 검증
+        let validSchool = this.schoolData.find((item) =>
+          item.schoolName === this.searchText
+        );
+        if (!validSchool) {
+          alert('입력하신 기관명은 유효하지 않습니다. 목록에서 선택해주세요. \n해당기관이 리스트에 없으면 아래 번호로 문의주세요. \n * 인천미래채움 운영센터: 070-7726-3346/5256');
+          this.$refs.schoolInputTwoDay.focus();
+          return false;
+        }
+  
+        // 기관명이 유효하다면, 선택된 기관의 sn을 다시 설정합니다.
+        this.selectedSchool = validSchool.sn;
+  
+        // 교사명 유효성 검사
+        if (!this.teacherName.trim()) {
+          alert('교사명을 입력해주세요.');
+          this.$refs.teacherInputTwoDay.focus();
+          return false;
+        }
+  
+        // 핸드폰번호 유효성 검사
+        const phoneRegEx = /^[0-9]{3}[0-9]{4}[0-9]{4}$/;
+        if (!this.phoneNumber.trim() || !phoneRegEx.test(this.phoneNumber)) {
+          alert('핸드폰번호 11자리를 입력해주세요. ("-")는 생략해주세요.');
+          this.$refs.phoneInputTwoDay.focus();
+          return false;
+        }
+  
+        // 이메일 유효성 검사
+        if (!this.email.trim() || !this.email.includes('@')) {
+          alert('유효한 이메일을 입력해주세요.');
+          this.$refs.emailInputTwoDay.focus();
+          return false;
+        }
+  
+        // 이메일 인증번호 유효성 검사
+        if (!this.emailclear) {
+          alert('이메일 인증을 완료해주세요.');
+          // this.$refs.securitypwInputTwoDay.focus();
+          return false;
+        }
+  
+        // 학생수 유효성 검사
+        if (!this.studentCount || this.studentCount < 1) {
+          alert('학생수는 1명 이상이어야 합니다.');
+          this.$refs.studentCountInputTwoDay.focus();
+          return false;
+        }
+  
+        // 첫번째 시간대 선택 유효성 검사
+        if (this.selectedTimes.length === 0) {
+          alert('첫번째 방문 시간대를 최소 하나 이상 선택해주세요.');
+          return false;
+        }
+  
+        // 두번째 날짜 선택 유효성 검사
+        if (!this.selectedSecondDate) {
+          alert('두번째 신청할 날짜를 선택해주세요.');
+          this.$refs.twoDay.focus();
+          return false;
+        }
+  
+        // 두번째 시간대 선택 유효성 검사
+        if (this.selectedTimes2.length === 0) {
+          alert('두번째 방문 시간대를 최소 하나 이상 선택해주세요.');
+          return false;
+        }
+  
+        return true;
+      },
+  
+  
           onedayclick() {
-              if (this.emailclear === true){
+        // 유효성 검사가 통과되지 않을 시 데이터를 DB에 보내지 않고 리턴
+        if (!this.validateFormOneDay()) {
+          return;
+        }
                   axios
                   .post(
-                      `http://localhost:8081/reserve/api/v1/admin/addReservation?teacherName=${this.teacherName}&phone=${this.phoneNumber}&email=${this.email}&studentsPerGroup=${this.studentCount}&curriculumSn=${this.curriculumSn}&schoolSn=1&classDate=${this.selectedDate}&classDate2=${this.classDate}&classSchedule=${this.selectedTimes.join(',')}`
+            `${this.api}/reserve/api/v1/admin/addReservation?teacherName=${this.teacherName}&phone=${this.phoneNumber}&email=${this.email}&studentsPerGroup=${this.studentCount}&curriculumSn=${this.curriculumSn}&schoolSn=${this.selectedSchool}&classDate=${this.selectedDate}&classDate2=${this.classDate}&classSchedule=${this.selectedTimes.join(',')}`
                   )
                   .then((response) => {
-                      console.log('aaa :' + response.data)
-                      this.showModal = false;
+            if (response.data.result.msg != 'SUCCESS') {
+              // 서버로부터 받은 데이터가 'SUCCESS'가 아니면 아래 처리를 실행
+              alert('서버로부터 예상치 않은 응답을 받았습니다. \n'+response.data.result.msg)
+            } else {
+              if (confirm('신청이 완료되어 입력한 이메일로 예약확인 메일이 발송되었습니다.\n확인을 누르시면 새로고침이 됩니다.')) {
+                location.reload();
+              }
+            }
                   })
                   .catch((error) => {
                       console.error(error)
                   })
-              }
-              else {
-                  alert("기입되지 않은 항목이 있습니다.")
-                  return
-              }
           },
   
           twodayclick() {
-              if (this.emailclear === true){
+        // 유효성 검사가 통과되지 않을 시 데이터를 DB에 보내지 않고 리턴
+        if (!this.validateFormTwoDay()) {
+          return;
+        }
                   axios
                   .post(
-                  `http://localhost:8081/reserve/api/v1/admin/addDoubleReservation?teacherName=${this.teacherName}&phone=${this.phoneNumber}&email=${this.email}&studentsPerGroup=${this.studentCount}&curriculumSn=${this.curriculumSn}&schoolSn=${this.selectedSchool}&classDate=${this.selectedDate}&classDate2=${this.selectedSecondDate}&classSchedule=${this.selectedTimes.join(',')}`
+          `${this.api}/reserve/api/v1/admin/addDoubleReservation?teacherName=${this.teacherName}&phone=${this.phoneNumber}&email=${this.email}&studentsPerGroup=${this.studentCount}&curriculumSn=${this.curriculumSn}&schoolSn=${this.selectedSchool}&classDate=${this.selectedDate}&classDate2=${this.selectedSecondDate}&classSchedule=${this.selectedTimes.join(',')}`
                   )
                   .then((response) => {
-                      console.log('aaa :' + response.data)
-                      this.showModal = false;
+            if (response.data.result.msg != 'SUCCESS') {
+              // 서버로부터 받은 데이터가 'SUCCESS'가 아니면 아래 처리를 실행
+              alert('서버로부터 예상치 않은 응답을 받았습니다. \n'+response.data.result.msg)
+            } else {
+              if (confirm('신청이 완료되어 입력한 이메일로 예약확인 메일이 발송되었습니다.\n확인을 누르시면 새로고침이 됩니다.')) {
+                location.reload();
+              }
+            }
                   })
                   .catch((error) => {
                       console.error(error)
                   })
-              }
-              else {
-                  alert("기입되지 않은 항목이 있습니다.")
-                  return
-              }
+        
           },
   
           getEventMaxStudentCount() {
@@ -642,17 +786,17 @@
                   textColor: 'red',
                   })
               }
+  
               return events
           },
   
           fetchData() {
               axios
-              .post(`http://localhost:8081/reserve/api/v1/admin/findAllLocalChildren?curriculumSn=${this.curriculumSna}`)
+        .post(`${this.api}/reserve/api/v1/admin/findAllLocalChildren?curriculumSn=${this.curriculumSna}`)
               .then((response) => {
                   const data = response.data.result.data;
                   const dates = Object.keys(data).map((date) => date.split('T')[0]); // Extract date without time
                   const sortedDates = dates.sort((a, b) => new Date(a) - new Date(b)); // Sort dates in ascending order
-                  // console.log("response.data :" + JSON.stringify(response.data) )
                   this.dateOptions = sortedDates.map((date) => ({
                       value: date,
                       label: date,
@@ -682,7 +826,7 @@
   
                   // API 요청을 통해 데이터베이스와 통신
                   axios
-                  .post('http://localhost:8081/reserve/api/v1/admin/findAllLocalChildren?curriculumSn=12', {
+            .post(`${this.api}/reserve/api/v1/admin/findAllLocalChildren?curriculumSn=12`, {
                       clickedDate: clickedDate, // 클릭한 날짜 정보를 API 요청에 전달
                   })
                   .then((response) => {
@@ -699,11 +843,9 @@
           // 기관 필터 검색 (toggleDropdown함수까지)
           async getSchoolData() {
               try {
-                  const response = await axios.get('http://localhost:8081/reserve/api/v1/admin/findSchool'); 
+          const response = await axios.get(`${this.api}/reserve/api/v1/admin/findSchool`); 
                   this.schoolData = response.data.result.msg;
                   this.filteredData = this.schoolData;
-  
-                  console.log(JSON.stringify(this.filteredData))
               } catch (error) {
                   console.error(error);
               }
@@ -719,8 +861,9 @@
               }
           },
           selectData(data) {
-              this.searchText = data.schoolName; // 선택된 데이터로 검색어 설정
-              this.showDropdown = true; // 드롭다운 닫기
+        this.searchText = data.schoolName; // 입력필드에 선택한 학교 이름을 보여줍니다.
+        this.selectedSchool = data.sn; // 선택한 학교의 sn 값을 selectedSchool에 설정합니다.
+        this.showDropdown = true; // 드롭다운 메뉴를 닫습니다.
           },
           toggleDropdown() {
               this.showDropdown = !this.showDropdown; // 드롭다운 토글
@@ -779,6 +922,7 @@
   }
   
   .dropdown-toggle {
+      display: inline-block;
       width: 10%;
       background-color: transparent;
       border: none;
