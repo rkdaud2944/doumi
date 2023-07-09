@@ -287,7 +287,7 @@ import moment from 'moment'
 export default {
   data() {
     return {
-      // selectedSchool: '',
+      selectedSchool: null,
       teacherName: '',
       phoneNumber: '',
       email: '',
@@ -344,7 +344,7 @@ export default {
 
     isFormValid() {
       return (
-        this.selectedSchool !== '' &&
+        this.selectedSchool !== null &&
         /^[가-힣]{2,4}$/.test(this.teacherName) &&
         /^[0-9]{3}[0-9]{4}[0-9]{4}$/.test(this.phoneNumber) &&
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email) &&
@@ -356,7 +356,7 @@ export default {
 
     isFormValid2() {
       return (
-        this.selectedSchool !== '' &&
+        this.selectedSchool !== null &&
         /^[가-힣]{2,4}$/.test(this.teacherName) &&
         /^[0-9]{3}[0-9]{4}[0-9]{4}$/.test(this.phoneNumber) &&
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email) &&
@@ -500,7 +500,7 @@ export default {
     },
 
     refreshModalData() {
-      this.selectedSchool = ''
+      this.selectedSchool = null
       this.teacherName = ''
       this.phoneNumber = ''
       this.email = ''
@@ -515,7 +515,7 @@ export default {
 
     clearModalData() {
       // Reset the modal data to initial values
-      this.selectedSchool = ''
+      this.selectedSchool = null
       this.teacherName = ''
       this.phoneNumber = ''
       this.email = ''
@@ -530,21 +530,31 @@ export default {
 
     onedayclick() {
       if (this.emailclear === true){
-      axios
-        .post(
-          `http://localhost:8081/reserve/api/v1/admin/addReservation?teacherName=${this.teacherName}&phone=${this.phoneNumber}&email=${this.email}&studentsPerGroup=${this.studentCount}&curriculumSn=${this.curriculumSn}&schoolSn=${this.selectedSchool}&classDate=${this.selectedDate}&classDate2=${this.classDate}&classSchedule=${this.selectedTimes.join(',')}`
-        )
-        .then((response) => {
-          console.log('aaa :' + response.data)
-          this.showModal = false;
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-      }
-      else {
-      alert("기입되지 않은 항목이 있습니다.")
-      return
+        axios
+          .post(
+            `http://localhost:8081/reserve/api/v1/admin/addReservation?teacherName=${this.teacherName}&phone=${this.phoneNumber}&email=${this.email}&studentsPerGroup=${this.studentCount}&curriculumSn=${this.curriculumSn}&schoolSn=${this.selectedSchool}&classDate=${this.selectedDate}&classDate2=${this.classDate}&classSchedule=${this.selectedTimes.join(',')}`
+          )
+          .then((response) => {
+            console.log(response.data.result.msg)
+            if (response.data.result.msg != 'SUCCESS') {
+              // 서버로부터 받은 데이터가 'SUCCESS'가 아니면 아래 처리를 실행
+              alert('서버로부터 예상치 않은 응답을 받았습니다. e : '+response.data.result.msg)
+            } else {
+              if (confirm('신청이 완료되었습니다. 페이지를 새로고침하시겠습니까?')) {
+                location.reload();
+              }
+              console.log('aaa :' + response.data)
+              this.showModal = false;
+              // 'SUCCESS'를 받으면 알림을 띄우고, 사용자가 확인을 누르면 페이지를 새로고침합니다.
+            }
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+        }
+        else {
+          alert("기입되지 않은 항목이 있습니다.")
+        return
       }
     },
 
@@ -555,7 +565,7 @@ export default {
           `http://localhost:8081/reserve/api/v1/admin/addDoubleReservation?teacherName=${this.teacherName}&phone=${this.phoneNumber}&email=${this.email}&studentsPerGroup=${this.studentCount}&curriculumSn=${this.curriculumSn}&schoolSn=${this.selectedSchool}&classDate=${this.selectedDate}&classDate2=${this.selectedSecondDate}&classSchedule=${this.selectedTimes.join(',')}`
         )
         .then((response) => {
-          console.log('aaa :' + response.data)
+          console.log(response.data)
           this.showModal = false;
         })
         .catch((error) => {
@@ -691,8 +701,6 @@ export default {
         const response = await axios.get('http://localhost:8081/reserve/api/v1/admin/findSchool'); 
         this.schoolData = response.data.result.msg;
         this.filteredData = this.schoolData;
-
-        console.log(JSON.stringify(this.filteredData))
       } catch (error) {
         console.error(error);
       }
@@ -708,8 +716,9 @@ export default {
       }
     },
     selectData(data) {
-      this.searchText = data.schoolName; // 선택된 데이터로 검색어 설정
-      this.showDropdown = true; // 드롭다운 닫기
+      this.searchText = data.schoolName; // 입력필드에 선택한 학교 이름을 보여줍니다.
+      this.selectedSchool = data.sn; // 선택한 학교의 sn 값을 selectedSchool에 설정합니다.
+      this.showDropdown = true; // 드롭다운 메뉴를 닫습니다.
     },
     toggleDropdown() {
       this.showDropdown = !this.showDropdown; // 드롭다운 토글
