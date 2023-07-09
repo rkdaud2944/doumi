@@ -36,18 +36,24 @@
         </label>
       </div>
       <div>
+        
 
         <!-- 하루 방문 모달창 -->
         <div v-if="checkedValue === 'one'">
           <form style="margin-left: 1%; margin-right: auto;">
             <label for="school">기관명</label>
-            <select id="school" name="school" v-model="selectedSchool" required>
-              <option value="">기관 선택</option>
-              <option value="1">기관 1</option>
-              <option value="2">기관 2</option>
-              <option value="3">기관 3</option>
-            </select>
-
+              <div class="dropdown-container">
+                <input type="text" v-model="searchText" @input="filterData" @focus="showDropdown = false" placeholder="검색어를 입력하세요" />
+                <button class="dropdown-toggle" @click="toggleDropdown">
+                  <i class="arrow-icon" :class="{'arrow-up': showDropdown, 'arrow-down': !showDropdown}"></i>
+                </button>
+                <ul class="dropdown-menu" v-show="!showDropdown">
+                  <li v-for="item in filteredData" :key="item.sn" @click="selectData(item)">
+                    {{ item.schoolName }}
+                  </li>
+                </ul>
+            </div>
+  
             <label for="teacher">교사명</label>
             <input type="text" id="teacher" name="teacher" v-model="teacherName" required />
 
@@ -95,12 +101,17 @@
             <div style="display: flex; justify-content: space-between;">
               <form @submit.prevent="onSubmit" style=" margin-left: 1%; margin-right: auto;">
                 <label for="school">기관명</label>
-                  <select id="school" name="school" v-model="selectedSchool" required>
-                    <option value="">기관 선택</option>
-                    <option value="1">기관 1</option>
-                    <option value="2">기관 2</option>
-                    <option value="3">기관 3</option>
-                  </select>
+                  <div class="dropdown-container">
+                    <input type="text" v-model="searchText" @input="filterData" @focus="showDropdown = false" placeholder="검색어를 입력하세요" />
+                    <button class="dropdown-toggle" @click="toggleDropdown">
+                      <i class="arrow-icon" :class="{'arrow-up': showDropdown, 'arrow-down': !showDropdown}"></i>
+                    </button>
+                    <ul class="dropdown-menu" v-show="!showDropdown">
+                      <li v-for="item in filteredData" :key="item.sn" @click="selectData(item)">
+                        {{ item.schoolName }}
+                      </li>
+                    </ul>
+                </div>
                   <label for="teacher">교사명</label>
                   <input type="text" id="teacher" name="teacher" v-model="teacherName" required>
                   <label for="phone">핸드폰번호 (- 생략)</label>
@@ -274,24 +285,9 @@ import axios from 'axios'
 import moment from 'moment'
 
 export default {
-  watch: {
-    showModal(value) {
-      if (value === true) {
-        this.refreshModalData()
-      } else {
-        this.clearModalData()
-      }
-    },
-    checkedValue() {
-      if (this.showModal) {
-        this.refreshModalData()
-      }
-    },
-  },
-
   data() {
     return {
-      selectedSchool: '',
+      // selectedSchool: '',
       teacherName: '',
       phoneNumber: '',
       email: '',
@@ -313,12 +309,25 @@ export default {
       countdownInterval: null,
       buttonDisabled: true,
       emailclear : false,
-
+      
+      schoolData: [], // 초기 데이터
+      filteredData: [], // 검색어로 필터링된 데이터
+      selectedData: null, // 선택된 데이터
+      showDropdown: true, // 드롭다운 메뉴 표시 여부
+      searchText: '', // 검색어
     }
   },
 
   components: {
     FullCalendar,
+  },
+
+  beforeMount() {
+    this.fetchData()
+  },
+  
+  mounted() {
+    this.getSchoolData(); // 초기 데이터 가져오기
   },
 
   computed: {
@@ -330,8 +339,9 @@ export default {
     return this.dateOptions.filter(dateOption => dateOption.value > this.selectedDate);
   },
     showCountdown() {
-    return this.showEmailInput && this.countdown > 0;
-  },
+      return this.showEmailInput && this.countdown > 0;
+    },
+
     isFormValid() {
       return (
         this.selectedSchool !== '' &&
@@ -343,6 +353,7 @@ export default {
         this.selectedTimes.length === 2
       )
     },
+
     isFormValid2() {
       return (
         this.selectedSchool !== '' &&
@@ -354,6 +365,7 @@ export default {
         this.selectedTimes.length === 1
       )
     },
+
     calendarOptions() {
       return {
         plugins: [dayGridPlugin, interactionPlugin],
@@ -398,6 +410,7 @@ export default {
         },
       }
     },
+
     timeOptions() {
       return [
         { id: 'time-a', label: '10:00 ~ 11:30' },
@@ -409,14 +422,11 @@ export default {
         { id: 'time-g', label: '16:30 ~ 18:00' },
       ]
     },
-  },
-
-  beforeMount() {
-    this.fetchData()
+    
   },
 
   methods: {
-     toggleTable(tableNumber) {
+    toggleTable(tableNumber) {
       if (tableNumber === 1) {
         this.showTable1 = !this.showTable1;
       } else if (tableNumber === 2) {
@@ -424,13 +434,14 @@ export default {
       } else if (tableNumber === 3) {
         this.showTable3 = !this.showTable3;
       }
-    }
-  ,
+    },
+
     formatCountdown() {
       const minutes = Math.floor(this.countdown / 60);
       const seconds = this.countdown % 60;
       return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     },
+
     sendEmail() {
       axios
       .get(
@@ -453,7 +464,8 @@ export default {
       .catch((error) => {
         console.error(error)
       })
-     },
+    },
+
     emailSecurity() {
       axios
       .get(
@@ -475,15 +487,18 @@ export default {
         console.error(error)
       })
     },
+
     displaySelectedDateTitle() {
       const eventData = this.events.find((event) => event.date === this.selectedSecondDate)
       const match = eventData ? eventData.title.match(/\d+/) : null
       this.selectedDateTitle = match ? match[0] : ''
     },
+
     getSelectedDateTitle() {
       const eventData = this.events.find((event) => event.date === this.selectedSecondDate)
       return eventData ? eventData.title : ''
     },
+
     refreshModalData() {
       this.selectedSchool = ''
       this.teacherName = ''
@@ -497,6 +512,7 @@ export default {
       this.showEmailInput = false;
       this.buttonDisabled = true;
     },
+
     clearModalData() {
       // Reset the modal data to initial values
       this.selectedSchool = ''
@@ -563,10 +579,12 @@ export default {
       }
       return 0
     },
+
     getEventTitle() {
       const eventData = this.events.find((event) => event.date === this.selectedDate)
       return eventData ? eventData.title : ''
     },
+
     convertDataToEvents(data) {
       const events = Object.entries(data).map(([date, value]) => {
         let startDate = moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD')
@@ -615,6 +633,7 @@ export default {
 
       return events
     },
+    
     fetchData() {
       axios
       .post(`http://localhost:8081/reserve/api/v1/admin/findAllLocalChildren?curriculumSn=${this.curriculumSna}`)
@@ -666,7 +685,52 @@ export default {
       }
     },
 
+    // 기관 필터 검색 (toggleDropdown함수까지)
+    async getSchoolData() {
+      try {
+        const response = await axios.get('http://localhost:8081/reserve/api/v1/admin/findSchool'); 
+        this.schoolData = response.data.result.msg;
+        this.filteredData = this.schoolData;
 
+        console.log(JSON.stringify(this.filteredData))
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    
+    filterData() {
+      if (this.searchText === '') {
+        this.filteredData = this.schoolData; // 검색어가 없으면 전체 데이터 표시
+      } else {
+        this.filteredData = this.schoolData.filter((item) =>
+          item.schoolName.includes(this.searchText) // 검색어로 필터링된 데이터만 표시
+        );
+      }
+    },
+    selectData(data) {
+      this.searchText = data.schoolName; // 선택된 데이터로 검색어 설정
+      this.showDropdown = true; // 드롭다운 닫기
+    },
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown; // 드롭다운 토글
+    },
+  },
+  
+  watch: {
+    showModal(value) {
+      if (value === true) {
+        this.refreshModalData()
+      } else {
+        this.clearModalData()
+      }
+    },
+
+    checkedValue() {
+      if (this.showModal) {
+        this.refreshModalData()
+      }
+    },
+    
   },
 
   setup() {
@@ -692,6 +756,66 @@ export default {
 </script>
 
 <style>
+
+.dropdown-container {
+  width : 100%;
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-container input{
+  width: 90%;
+}
+
+.dropdown-toggle {
+  width: 10%;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.arrow-icon {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 5px 0 5px;
+  border-color: #999 transparent transparent transparent;
+  transition: transform 0.3s;
+}
+
+.arrow-up {
+  transform: rotate(180deg);
+}
+
+.arrow-down {
+  transform: rotate(0);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 999;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  display: block; /* ul 요소가 화면에 표시되도록 수정 */
+  overflow-y: auto;
+}
+
+.dropdown-menu li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f1f1f1;
+}
+
+/* ############# */
+
 .calendar {
   margin-right: auto;
   margin-left: auto;
