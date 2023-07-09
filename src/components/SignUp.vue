@@ -2,11 +2,11 @@
     <FullCalendar :options="calendarOptions" class="calendar" @eventClick="handleDateClick" />
     <!-- 모달창 -->
     <div v-if="showModal" class="modal">
-      <div class="modal-content" style="width: 500px; height: 70%; overflow-y: auto;">
+      <div class="modal-content">
         <div class="modal-header">
           <div style="font-weight: bold; text-align: left;">
             날짜 : {{ selectedDate }}
-            <div> 남은 {{ getEventTitle() }}개
+            <div> 남은 자리 : {{ getEventTitle() }}
             </div>
           </div>
           <br />
@@ -17,7 +17,7 @@
             해당 내용은
               <a style="color: red;">추후 수정이 불가
               </a>
-            합니다. 아래의 내용을 확인하시고,<br>상황을 고려하여 신청 바랍니다.
+            합니다. <br>아래의 내용을 확인하시고,<br>상황을 고려하여 신청 바랍니다.
           </p>
           <span @click="showModal = false" class="close">&times;
           </span>
@@ -40,7 +40,7 @@
   
           <!-- 하루 방문 모달창 -->
           <div v-if="checkedValue === 'one'">
-            <form style="margin-left: 1%; margin-right: auto;">
+            <form style="margin-left:auto; margin-right: auto;">
               <label for="school">과목명</label>
               
               <select id="school" name="school" v-model="curriculumSn" required>
@@ -99,7 +99,18 @@
                 </label>
               </div>
               <div class="modal-footer">
-                <div v-if="checkedValue === 'one'" @click="onedayclick">신청</div>
+                <div style="
+                    background-color: #4caf50;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 10px 10px;
+                    cursor: pointer;
+                    height: 40px;
+                    width: 50px;
+                    margin-left: auto;
+                    margin-right: 1%;"
+                    v-if="checkedValue === 'one'" @click="onedayclick">신청</div>
               </div>
             </form>
           </div>
@@ -107,7 +118,7 @@
           <!-- 이틀 방문 모달창 -->
           <div v-if="checkedValue === 'two'">
               <div style="display: flex; justify-content: space-between;">
-                <form @submit.prevent="onSubmit" style=" margin-left: 1%; margin-right: auto;">
+                <form @submit.prevent="onSubmit" style=" margin-left:auto; margin-right: auto;">
                     <label for="school">과목명</label>
                 
                     <select id="school" name="school" v-model="curriculumSn" required>
@@ -189,7 +200,17 @@
                       
                     </div>
                     <div class="modal-footer">
-                      <button type="submit" v-if="checkedValue === 'two'" @click="twodayclick">신청</button>
+                      <button style="
+                        background-color: #4caf50;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        padding: 10px 10px;
+                        cursor: pointer;
+                        height: 40px;
+                        width: 50px;
+                        margin-left: auto;
+                        margin-right: 1%;" type="submit" v-if="checkedValue === 'two'" @click="twodayclick">신청</button>
                     </div>
                 </form>  
               </div>
@@ -199,7 +220,7 @@
     </div>
     <!-- 표 -->
     <h2 style="margin-left: auto; margin-right: auto;  text-align:center; margin-top: 20px; ">아래 과목을 참고하고, 위 달력을 클릭하여 남은 자리를 참고하고 예약하세요.</h2>
-    <div style="margin-left: auto; margin-right: auto;  text-align:center; margin-bottom: 20px; display:flex; justify-content: center;">
+    <div class="curidata">
   
     
         <div class="poster">
@@ -745,7 +766,7 @@
               const events = Object.entries(data).map(([date, value]) => {
                   let startDate = moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD')
                   let event = {
-                      title: `태블릿: ${value}`,
+                      title: `${value} 남음`,
                       date: startDate,
                   }
                   return event
@@ -909,282 +930,312 @@
   }
   </script>
   
-  <style>
-  
-  .dropdown-container {
-      width : 100%;
-      position: relative;
-      display: inline-block;
-  }
-  
-  .dropdown-container input{
-      width: 90%;
-  }
-  
-  .dropdown-toggle {
-      display: inline-block;
-      width: 10%;
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 5px;
-  }
-  
-  .arrow-icon {
-      display: inline-block;
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 5px 5px 0 5px;
-      border-color: #999 transparent transparent transparent;
-      transition: transform 0.3s;
-  }
-  
-  .arrow-up {
-      transform: rotate(180deg);
-  }
-  
-  .arrow-down {
-      transform: rotate(0);
-  }
-  
-  .dropdown-menu {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      z-index: 999;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      max-height: 200px;
-      display: block; /* ul 요소가 화면에 표시되도록 수정 */
-      overflow-y: auto;
-  }
-  
-  .dropdown-menu li {
-      padding: 10px;
-      cursor: pointer;
-  }
-  
-  .dropdown-menu li:hover {
-      background-color: #f1f1f1;
-  }
-  
-  /* ############# */
-  
-  .calendar {
-      margin-right: auto;
-      margin-left: auto;
-      text-align: center;
-      width: 80%;
-      margin-top: 10px;
-  }
-  .vgt-left-align {
-      text-align: center;
-  }
-  .vgt-right-align {
-      text-align: center;
-  }
-  .fc-col-header-cell:nth-of-type(1) .fc-col-header-cell-cushion {
-      color: red;
-  }
-  .holiday-event {
-      background-color: rgba(255, 255, 255, 0.0) !important;
-      border: none !important;
-      color: red !important;
-      bottom: 25px;
-      text-align: right !important;
-      margin-right: 5px !important;
-  }
-  .fc-daygrid-day-top {
-      flex-direction: row !important;
-  }
-  .fc-event-main {
-      text-align: left;
-  }
-  .holiday-event .fc-event-main {
-      text-align: right;
-  }
-  .fc-daygrid-day-frame {
-      height: 100px;
-      overflow: hidden;
-  }
-  .modal {
-      display: block;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-  }
-  .modal-content {
-      background-color: #fefefe;
-      margin: 15% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-      bottom: 80px;
-  }
-  .modal-header {
-      padding: 10px;
-      text-align: center;
-  }
-  .modal-footer {
-      padding: 10px;
-      text-align: right;
-  }
-  #two-day {
-      margin-left: 5%;
-  }
-  .close {
-      position: absolute;
-      right: 15px;
-      top: 10px;
-      font-size: 28px;
-      font-weight: bold;
-      color: #000;
-  }
-  .close:hover,
-  .close:focus {
-      color: #000;
-      text-decoration: none;
-      cursor: pointer;
-  }
-  /* 전체 폼 스타일 */
-  form {
-      max-width: 400px;
-      margin: 0 auto;
-  }
-  
-  /* 레이블 스타일 */
-  label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-  }
-  
-  /* 입력 필드 스타일 */
-  input,
-  select {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 16px;
-      margin-bottom: 10px;
-  }
-  
-  /* 제출 버튼 스타일 */
-  input[type='submit'] {
-      background-color: #4caf50;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-  }
-  
-  input[type='submit']:hover {
-      background-color: #45a049;
-  }
-  
-  /* 오류 표시 스타일 */
-  input:invalid {
-      border-color: #ff0000;
-  }
-  .email-button {
-      background-color: #4caf50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 8px 12px;
-      margin-left: 5px;
-      cursor: pointer;
-      height: 40px;
-      width: 50px;
-  }
-  
-  .email-button:hover {
-      background-color: #45a049;
-  }
-  .table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-bottom: 1em;
-  
-  }
-  
-  .table th,
-  .table td {
-      border: 1px solid #ddd;
-      padding: 8px;
-  }
-  
-  .table th {
-      background-color: #f2f2f2;
-      font-weight: bold;
-  }
-  .poster {
-      width: 26vw;
-      min-width: 300px;
-      background-color: #f3f3f3;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      margin-top : 30px;
-      padding: 20px;
-      display:inline-block;
-      height: 800px;
-  }
-  
-  .poster-header {
-      text-align: center;
-      margin-bottom: 10px;
-  
-  }
-  
-  .poster-title {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: #333;
-  }
-  
-  .poster-date {
-      font-size: 16px;
-      color: #888;
-  }
-  .poster-goal{
-      font-size: 14.5px;
-      color: #2c2c2c;
-      text-align: left;
-  
-  }
-  
-  .poster-description {
-      text-align: justify;
-      line-height: 1.5;
-      color: #555;
-  
-  }
-  .custom-button {
-      display: inline-block;
-      background-color: #3498db;
-      color: #fff;
-      font-size: 16px;
-      font-weight: bold;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-  }
-  
-  .custom-button:hover {
-      background-color: #2980b9;
-  }
-  
-  .toggle-icon {
-      margin-left: 5px;
-  }
-  
-  </style>
+<style>
+
+.dropdown-container {
+    width : 100%;
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-container input{
+    width: 90%;
+}
+
+.dropdown-toggle {
+    display: inline-block;
+    width: 10%;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.arrow-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 5px 0 5px;
+    border-color: #999 transparent transparent transparent;
+    transition: transform 0.3s;
+}
+
+.arrow-up {
+    transform: rotate(180deg);
+}
+
+.arrow-down {
+    transform: rotate(0);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    display: block; /* ul 요소가 화면에 표시되도록 수정 */
+    overflow-y: auto;
+}
+
+.dropdown-menu li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.dropdown-menu li:hover {
+    background-color: #f1f1f1;
+}
+
+/* ############# */
+
+.calendar {
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+    width: 80%;
+    margin-top: 10px;
+}
+.vgt-left-align {
+    text-align: center;
+}
+.vgt-right-align {
+    text-align: center;
+}
+.fc-col-header-cell:nth-of-type(1) .fc-col-header-cell-cushion {
+    color: red;
+}
+.holiday-event {
+    background-color: rgba(255, 255, 255, 0.0) !important;
+    border: none !important;
+    color: red !important;
+    bottom: 25px;
+    text-align: right !important;
+    margin-right: 5px !important;
+}
+.fc-daygrid-day-top {
+    flex-direction: row !important;
+}
+.fc-event-main {
+    text-align: left;
+}
+.holiday-event .fc-event-main {
+    text-align: right;
+}
+.fc-daygrid-day-frame {
+    height: 100px;
+    overflow: hidden;
+}
+.modal {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    top: -5vh;
+    width: 500px;
+    height: 70%;
+    overflow-y: auto;
+}
+.modal-header {
+    padding: 10px;
+    text-align: center;
+}
+.modal-footer {
+    padding: 10px;
+    text-align: right;
+}
+#two-day {
+    margin-left: 5%;
+}
+.close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #000;
+}
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+/* 전체 폼 스타일 */
+form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+/* 레이블 스타일 */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+/* 입력 필드 스타일 */
+input,
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+/* 제출 버튼 스타일 */
+input[type='submit'] {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+input[type='submit']:hover {
+    background-color: #45a049;
+}
+/* 오류 표시 스타일 */
+input:invalid {
+    border-color: #ff0000;
+}
+.email-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-left: 5px;
+    cursor: pointer;
+    height: 40px;
+    width: 50px;
+}
+.email-button:hover {
+    background-color: #45a049;
+}
+.table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 1em;
+}
+.table th,
+.table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+.table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+.poster {
+    width: 26vw;
+    min-width: 300px;
+    background-color: #f3f3f3;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    margin-top : 30px;
+    padding: 20px;
+    display:inline-block;
+    height: 800px;
+}
+.poster-header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.poster-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+.poster-date {
+    font-size: 16px;
+    color: #888;
+}
+.poster-goal{
+    font-size: 14.5px;
+    color: #2c2c2c;
+    text-align: left;
+}
+.poster-description {
+    text-align: justify;
+    line-height: 1.5;
+    color: #555;
+}
+.custom-button {
+    display: inline-block;
+    background-color: #3498db;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.custom-button:hover {
+    background-color: #2980b9;
+}
+.toggle-icon {
+    margin-left: 5px;
+}
+@media (max-width: 576px) {
+    .modal {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 3%;
+        margin-top : 15%;
+        padding: 20px;
+        border: 1px solid #888;
+        bottom: 10px;
+        width: 350px;
+        height: 70%;
+        overflow-y: auto;
+    }
+    .modal-header {
+        padding: 10px;
+        text-align: center;
+    }
+    .modal-footer {
+        padding: 10px;
+        text-align: right;
+    }
+    .curidata{
+        margin-left: auto;
+        margin-right: auto;
+        text-align:center;
+        margin-bottom: 20px;
+        justify-content: center;
+        display: block !important;
+    }
+
+}
+.curidata{
+    margin-left: auto;
+    margin-right: auto;
+    text-align:center;
+    margin-bottom: 20px;
+    display:flex;
+    justify-content: center;
+}
+</style>

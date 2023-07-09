@@ -3,6 +3,7 @@
     <div class="top_bar">
       <img class="logo" src = "@/assets/logo.png" />
     </div>
+    
   </nav>
 </template>
 
