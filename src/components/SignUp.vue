@@ -98,7 +98,7 @@
             </label>
           </div>           
           <div class="modal-footer">
-            <button style="
+            <div style="
               background-color: #4caf50;
                 color: white;
                 border: none;
@@ -108,7 +108,7 @@
                 height: 40px;
                 width: 50px;
                 margin-left: auto;
-                margin-right: 1%;" type="submit" v-if="checkedValue === 'one'" @click="onedayclick">신청</button>
+                margin-right: 1%;" v-if="checkedValue === 'one'" @click="onedayclick">신청</div>
             </div>
         </form>
       </div>
@@ -215,7 +215,7 @@
   </div>
 </div>
 <!-- 표 -->
-<h2 style="margin-left: auto; margin-right: auto;  text-align:center; margin-top: 20px; ">아래 과목을 참고하고, 위 달력을 클릭하여 남은 자리를 참고하고 예약하세요.</h2>
+<h2 style="margin-left: auto; margin-right: auto;  text-align:center; margin-top: 20px; "><br/>아래 과목별 커리큘럼을 확인해주세요.<br/> 달력에서 날짜별 남은 자리 확인 후 클릭하여 예약하세요.</h2>
   <div class="curidata">
 
   
@@ -436,9 +436,10 @@ computed: {
       { id: 'time-e', label: '15:00 ~ 16:30' },
       { id: 'time-f', label: '16:00 ~ 17:30' },
       { id: 'time-g', label: '16:30 ~ 18:00' },
+      { id: 'time-h', label: '17:00 ~ 18:30' },
+      { id: 'time-i', label: '17:30 ~ 19:00' },
     ]
   },
-  
 },
 
 methods: {
@@ -713,6 +714,7 @@ methods: {
             location.reload();
           }
         }
+        console.log("Aa : "+JSON.stringify(response.data.result.msg))
       })
       .catch((error) => {
         console.error(error)
