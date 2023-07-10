@@ -97,8 +97,20 @@
               {{ time.label }}
             </label>
           </div>
-          <div class="modal-footer">
-            <div v-if="checkedValue === 'one'" @click="onedayclick">신청</div>
+          <div class="modal-footer">            
+            <div class="modal-footer">
+                    <button style="
+                      background-color: #4caf50;
+                      color: white;
+                      border: none;
+                      border-radius: 4px;
+                      padding: 10px 10px;
+                      cursor: pointer;
+                      height: 40px;
+                      width: 50px;
+                      margin-left: auto;
+                      margin-right: 1%;" type="submit" v-if="checkedValue === 'one'" @click="onedayclick">신청</button>
+                  </div>
           </div>
         </form>
       </div>
@@ -107,6 +119,7 @@
       <div v-if="checkedValue === 'two'">
           <div style="display: flex; justify-content: space-between;">
             <form @submit.prevent="onSubmit" style=" margin-left: 1%; margin-right: auto;">
+              <label for="school">과목명</label>
               <select id="school" name="school" v-model="curriculumSn" required>
                   <option value="1">3D프린팅과 모델링</option>
                   <option value="2">할로코드로 만드는 사물인터넷</option>
@@ -286,8 +299,8 @@
             - LED 색 변경하는  코딩하기<br>
 
             2차시 : 햄스터봇 움직이기<br>
-            - 키보드로 햄스터봇 움직이기 <br>
-            - 라인을 따라 움직이는 자율주행 햄스터만들기<br><br>
+            - 라인을 따라 움직이는 자율주행 햄스터만들기 <br>
+            - 말판을 인식하고, 목표장소로 이동하기<br><br>
 
             3차시 : 노래하는 햄스터봇<br>
             - 햄스터봇의 스피커를 이용하여 노래하기<br>
@@ -342,8 +355,8 @@ data() {
     selectedData: null, // 선택된 데이터
     showDropdown: true, // 드롭다운 메뉴 표시 여부
     searchText: '', // 검색어
-    api:'http://localhost:8081', // 로컬 테스트용
-    // api:'http://43.202.4.224:8081', // 실사용 서버 주소
+    // api:'http://localhost:8081', // 로컬 테스트용
+    api:'http://43.202.4.224:8081', // 실사용 서버 주소
   }
 },
 
@@ -696,7 +709,9 @@ methods: {
           // 서버로부터 받은 데이터가 'SUCCESS'가 아니면 아래 처리를 실행
           alert('서버로부터 예상치 않은 응답을 받았습니다. \n'+response.data.result.msg)
         } else {
-          if (confirm('신청이 완료되어 입력한 이메일로 예약확인 메일이 발송되었습니다.\n확인을 누르시면 새로고침이 됩니다.')) {
+          if (confirm('신청이 완료되어 입력한 이메일로 예약확인 메일이 발송되었습니다.')) {
+            location.reload();
+          }else{
             location.reload();
           }
         }
@@ -720,7 +735,9 @@ methods: {
           // 서버로부터 받은 데이터가 'SUCCESS'가 아니면 아래 처리를 실행
           alert('서버로부터 예상치 않은 응답을 받았습니다. \n'+response.data.result.msg)
         } else {
-          if (confirm('신청이 완료되어 입력한 이메일로 예약확인 메일이 발송되었습니다.\n확인을 누르시면 새로고침이 됩니다.')) {
+          if (confirm('신청이 완료되어 입력한 이메일로 예약확인 메일이 발송되었습니다.')) {
+            location.reload();
+          }else{
             location.reload();
           }
         }
@@ -751,7 +768,7 @@ methods: {
     const events = Object.entries(data).map(([date, value]) => {
       let startDate = moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD')
       let event = {
-        title: `태블릿: ${value}`,
+        title: `${value} 자리 남음`,
         date: startDate,
       }
       return event
@@ -914,328 +931,312 @@ setup() {
 },
 }
 </script>
-
 <style>
 
 .dropdown-container {
-width : 100%;
-position: relative;
-display: inline-block;
+    width : 100%;
+    position: relative;
+    display: inline-block;
 }
 
 .dropdown-container input{
-width: 90%;
+    width: 90%;
 }
 
 .dropdown-toggle {
-display: inline-block;
-width: 10%;
-background-color: transparent;
-border: none;
-cursor: pointer;
-padding: 5px;
+    display: inline-block;
+    width: 10%;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
 }
 
 .arrow-icon {
-display: inline-block;
-width: 0;
-height: 0;
-border-style: solid;
-border-width: 5px 5px 0 5px;
-border-color: #999 transparent transparent transparent;
-transition: transform 0.3s;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 5px 0 5px;
+    border-color: #999 transparent transparent transparent;
+    transition: transform 0.3s;
 }
 
 .arrow-up {
-transform: rotate(180deg);
+    transform: rotate(180deg);
 }
 
 .arrow-down {
-transform: rotate(0);
+    transform: rotate(0);
 }
 
 .dropdown-menu {
-position: absolute;
-top: 100%;
-left: 0;
-z-index: 999;
-background-color: #fff;
-border: 1px solid #ccc;
-max-height: 200px;
-display: block; /* ul 요소가 화면에 표시되도록 수정 */
-overflow-y: auto;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    display: block; /* ul 요소가 화면에 표시되도록 수정 */
+    overflow-y: auto;
 }
 
 .dropdown-menu li {
-padding: 10px;
-cursor: pointer;
+    padding: 10px;
+    cursor: pointer;
 }
 
 .dropdown-menu li:hover {
-background-color: #f1f1f1;
+    background-color: #f1f1f1;
 }
 
 /* ############# */
 
 .calendar {
-margin-right: auto;
-margin-left: auto;
-text-align: center;
-width: 80%;
-margin-top: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+    width: 80%;
+    margin-top: 10px;
 }
 .vgt-left-align {
-text-align: center;
+    text-align: center;
 }
 .vgt-right-align {
-text-align: center;
+    text-align: center;
 }
 .fc-col-header-cell:nth-of-type(1) .fc-col-header-cell-cushion {
-color: red;
+    color: red;
 }
 .holiday-event {
-background-color: rgba(255, 255, 255, 0.0) !important;
-border: none !important;
-color: red !important;
-bottom: 25px;
-text-align: right !important;
-margin-right: 5px !important;
+    background-color: rgba(255, 255, 255, 0.0) !important;
+    border: none !important;
+    color: red !important;
+    bottom: 25px;
+    text-align: right !important;
+    margin-right: 5px !important;
 }
 .fc-daygrid-day-top {
-flex-direction: row !important;
+    flex-direction: row !important;
 }
 .fc-event-main {
-text-align: left;
+    text-align: left;
 }
 .holiday-event .fc-event-main {
-text-align: right;
+    text-align: right;
 }
 .fc-daygrid-day-frame {
-height: 100px;
-overflow: hidden;
+    height: 100px;
+    overflow: hidden;
 }
 .modal {
-display: block;
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background-color: rgba(0, 0, 0, 0.5);
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 .modal-content {
-background-color: #fefefe;
-margin: 15% auto;
-padding: 20px;
-border: 1px solid #888;
-width: 80%;
-bottom: 80px;
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    top: -5vh;
+    width: 500px;
+    height: 70%;
+    overflow-y: auto;
 }
 .modal-header {
-padding: 10px;
-text-align: center;
+    padding: 10px;
+    text-align: center;
 }
 .modal-footer {
-padding: 10px;
-text-align: right;
+    padding: 10px;
+    text-align: right;
 }
 #two-day {
-margin-left: 5%;
+    margin-left: 5%;
 }
 .close {
-position: absolute;
-right: 15px;
-top: 10px;
-font-size: 28px;
-font-weight: bold;
-color: #000;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #000;
 }
 .close:hover,
 .close:focus {
-color: #000;
-text-decoration: none;
-cursor: pointer;
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
 }
 /* 전체 폼 스타일 */
 form {
-max-width: 400px;
-margin: 0 auto;
+    max-width: 400px;
+    margin: 0 auto;
 }
-
 /* 레이블 스타일 */
 label {
-display: block;
-margin-bottom: 5px;
-font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
-
 /* 입력 필드 스타일 */
 input,
 select {
-width: 100%;
-padding: 8px;
-border: 1px solid #ccc;
-border-radius: 4px;
-font-size: 16px;
-margin-bottom: 10px;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-bottom: 10px;
 }
-
 /* 제출 버튼 스타일 */
 input[type='submit'] {
-background-color: #4caf50;
-color: white;
-padding: 10px 20px;
-border: none;
-border-radius: 4px;
-cursor: pointer;
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
-
 input[type='submit']:hover {
-background-color: #45a049;
+    background-color: #45a049;
 }
-
 /* 오류 표시 스타일 */
 input:invalid {
-border-color: #ff0000;
+    border-color: #ff0000;
 }
 .email-button {
-background-color: #4caf50;
-color: white;
-border: none;
-border-radius: 4px;
-padding: 8px 12px;
-margin-left: 5px;
-cursor: pointer;
-height: 40px;
-width: 50px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-left: 5px;
+    cursor: pointer;
+    height: 40px;
+    width: 50px;
 }
-
 .email-button:hover {
-background-color: #45a049;
+    background-color: #45a049;
 }
 .table {
-border-collapse: collapse;
-width: 100%;
-margin-bottom: 1em;
-
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 1em;
 }
-
 .table th,
 .table td {
-border: 1px solid #ddd;
-padding: 8px;
+    border: 1px solid #ddd;
+    padding: 8px;
 }
-
 .table th {
-background-color: #f2f2f2;
-font-weight: bold;
+    background-color: #f2f2f2;
+    font-weight: bold;
 }
 .poster {
-  width: 26vw;
-  min-width: 300px;
-  background-color: #f3f3f3;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  margin-top : 30px;
-  padding: 20px;
-  display:inline-block;
-  height: 800px;
+    width: 26vw;
+    min-width: 300px;
+    background-color: #f3f3f3;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    margin-top : 30px;
+    padding: 20px;
+    display:inline-block;
+    height: 800px;
 }
-
 .poster-header {
-text-align: center;
-margin-bottom: 10px;
-
+    text-align: center;
+    margin-bottom: 10px;
 }
-
 .poster-title {
-font-size: 22px;
-font-weight: bold;
-margin-bottom: 5px;
-color: #333;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
 }
-
 .poster-date {
-font-size: 16px;
-color: #888;
+    font-size: 16px;
+    color: #888;
 }
 .poster-goal{
-font-size: 16px;
-color: #2c2c2c;
-text-align: left;
-
+    font-size: 14.5px;
+    color: #2c2c2c;
+    text-align: left;
 }
-
 .poster-description {
-text-align: justify;
-line-height: 1.5;
-color: #555;
-
-}.custom-button {
-display: inline-block;
-background-color: #3498db;
-color: #fff;
-font-size: 16px;
-font-weight: bold;
-padding: 10px 20px;
-border: none;
-border-radius: 4px;
-cursor: pointer;
+    text-align: justify;
+    line-height: 1.5;
+    color: #555;
 }
-
+.custom-button {
+    display: inline-block;
+    background-color: #3498db;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 .custom-button:hover {
-background-color: #2980b9;
+    background-color: #2980b9;
 }
-
 .toggle-icon {
-margin-left: 5px;
+    margin-left: 5px;
 }
 @media (max-width: 576px) {
-  .modal {
-      display: block;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-  }
-  .modal-content {
-      background-color: #fefefe;
-      margin: 3%;
-      margin-top : 15%;
-      padding: 20px;
-      border: 1px solid #888;
-      bottom: 10px;
-      width: 350px;
-      height: 70%;
-      overflow-y: auto;
-  }
-  .modal-header {
-      padding: 10px;
-      text-align: center;
-  }
-  .modal-footer {
-      padding: 10px;
-      text-align: right;
-  }
-  .curidata{
-      margin-left: auto;
-      margin-right: auto;
-      text-align:center;
-      margin-bottom: 20px;
-      justify-content: center;
-      display: block !important;
-  }
+    .modal {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 3%;
+        margin-top : 15%;
+        padding: 20px;
+        border: 1px solid #888;
+        bottom: 10px;
+        width: 350px;
+        height: 70%;
+        overflow-y: auto;
+    }
+    .modal-header {
+        padding: 10px;
+        text-align: center;
+    }
+    .modal-footer {
+        padding: 10px;
+        text-align: right;
+    }
+    .curidata{
+        margin-left: auto;
+        margin-right: auto;
+        text-align:center;
+        margin-bottom: 20px;
+        justify-content: center;
+        display: block !important;
+    }
 
 }
 .curidata{
-  margin-left: auto;
-  margin-right: auto;
-  text-align:center;
-  margin-bottom: 20px;
-  display:flex;
-  justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    text-align:center;
+    margin-bottom: 20px;
+    display:flex;
+    justify-content: center;
 }
 </style>
