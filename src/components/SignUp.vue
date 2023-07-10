@@ -188,7 +188,7 @@
                   <div>
                       <h3>두번째 신청하실 시간대를 선택해주세요.</h3>
 
-                  <label style="display: block" v-for="time in timeOptions" :key="time.id">
+                  <label style="display: block" v-for="time in timeOptions2" :key="time.id">
                     <input style="width: auto;" type="checkbox" :id="time.id" :value="time.label" ref="selectTimesTwoDay1" v-model="selectedTimes2"
                       :disabled="selectedTimes2.length >= 1 && !selectedTimes2.includes(time.label)" required />
                     {{ time.label }}
@@ -428,6 +428,19 @@ computed: {
   },
 
   timeOptions() {
+    return [
+      { id: 'time-a', label: '10:00 ~ 11:30' },
+      { id: 'time-b', label: '13:00 ~ 14:30' },
+      { id: 'time-c', label: '14:00 ~ 15:30' },
+      { id: 'time-d', label: '14:30 ~ 16:00' },
+      { id: 'time-e', label: '15:00 ~ 16:30' },
+      { id: 'time-f', label: '16:00 ~ 17:30' },
+      { id: 'time-g', label: '16:30 ~ 18:00' },
+      { id: 'time-h', label: '17:00 ~ 18:30' },
+      { id: 'time-i', label: '17:30 ~ 19:00' },
+    ]
+  },
+  timeOptions2() {
     return [
       { id: 'time-a', label: '10:00 ~ 11:30' },
       { id: 'time-b', label: '13:00 ~ 14:30' },
@@ -728,7 +741,7 @@ methods: {
     }
     axios
     .post(
-      `${this.api}/reserve/api/v1/admin/addDoubleReservation?teacherName=${this.teacherName}&phone=${this.phoneNumber}&email=${this.email}&studentsPerGroup=${this.studentCount}&curriculumSn=${this.curriculumSn}&schoolSn=${this.selectedSchool}&classDate=${this.selectedDate}&classDate2=${this.selectedSecondDate}&classSchedule=${this.selectedTimes.join(',')}`
+      `${this.api}/reserve/api/v1/admin/addDoubleReservation?teacherName=${this.teacherName}&phone=${this.phoneNumber}&email=${this.email}&studentsPerGroup=${this.studentCount}&curriculumSn=${this.curriculumSn}&schoolSn=${this.selectedSchool}&classDate=${this.selectedDate}&classDate2=${this.selectedSecondDate}&classSchedule=${this.selectedTimes.join(',')}&classSchedule2=${this.selectedTimes2.join(',')}`
     )
     .then((response) => {
         if (response.data.result.msg != 'SUCCESS') {
