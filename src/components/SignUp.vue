@@ -96,22 +96,20 @@
                 :disabled="selectedTimes.length >= 2 && !selectedTimes.includes(time.label)" required />
               {{ time.label }}
             </label>
-          </div>
-          <div class="modal-footer">            
-            <div class="modal-footer">
-                    <button style="
-                      background-color: #4caf50;
-                      color: white;
-                      border: none;
-                      border-radius: 4px;
-                      padding: 10px 10px;
-                      cursor: pointer;
-                      height: 40px;
-                      width: 50px;
-                      margin-left: auto;
-                      margin-right: 1%;" type="submit" v-if="checkedValue === 'one'" @click="onedayclick">신청</button>
-                  </div>
-          </div>
+          </div>           
+          <div class="modal-footer">
+            <button style="
+              background-color: #4caf50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 10px 10px;
+                cursor: pointer;
+                height: 40px;
+                width: 50px;
+                margin-left: auto;
+                margin-right: 1%;" type="submit" v-if="checkedValue === 'one'" @click="onedayclick">신청</button>
+            </div>
         </form>
       </div>
 
@@ -223,11 +221,11 @@
   
       <div class="poster">
         <div class="poster-header">
-          <h2 class="poster-title">4차시 3D프린팅과 모델링</h2>
+          <h2 class="poster-title">3D프린팅과 모델링 (4차시)</h2>
           <p class="poster-date">교육 대상 : 초등학생 / 중학생</p>
           <p class="poster-date">관련 분야 : 3D 모델링, 3D 프린팅</p>
           <p class="poster-date">준비물 : 태블릿, 인터넷</p><br>
-          <p class="poster-goal">학습목표 : <br>- 3D 프린팅의 원리를 이해한다.<br>- 틴커캐드를 이용하여 3D 모델링 작업을 한다.<br>- 틴커캐드를 이용하여 나만의 작품을 만들 수 있다.<br></p>
+          <p class="poster-goal">[학습목표]<br>- 3D 프린팅의 원리를 이해한다.<br>- 틴커캐드를 이용하여 3D 모델링 작업을 한다.<br>- 틴커캐드를 이용하여 나만의 작품을 만들 수 있다.<br></p>
         </div><br>
         <div class="poster-description">
           <p>
@@ -253,11 +251,11 @@
 
       <div style="margin-left: 10px; margin-right: 10px;" class="poster">
         <div class="poster-header">
-          <h2 class="poster-title">할로코드로 만드는 사물인터넷</h2>
+          <h2 class="poster-title">할로코드로 만드는 사물인터넷 (4차시)</h2>
           <p class="poster-date">교육 대상 : 초등학생 / 중학생</p>
           <p class="poster-date">관련 분야 : 피지컬 컴퓨팅, 인공지능</p>
           <p class="poster-date">준비물 : 태블릿, 인터넷</p><br>
-          <p class="poster-goal">학습목표 : <br>- 할로코드를 활용하여 LED를 제어할 수 있다.<br>- 다양한 센서를 활용하여 사물인터넷 장치를 개발할 수 있다.<br></p>
+          <p class="poster-goal">[학습목표]<br>- 할로코드를 활용하여 LED를 제어할 수 있다.<br>- 다양한 센서를 활용하여 사물인터넷 장치를 개발할 수 있다.<br></p>
         </div><br>
         <div class="poster-description">
           <p>
@@ -284,11 +282,11 @@
       </div>
       <div class="poster">
         <div class="poster-header">
-          <h2 class="poster-title">햄스터로 만나는 자율주행</h2>
+          <h2 class="poster-title">햄스터로 만나는 자율주행 (4차시)</h2>
           <p class="poster-date">교육 대상 : 초등학생 / 중학생</p>
           <p class="poster-date">관련 분야 : SW , 코딩, 컴퓨터 </p>
           <p class="poster-date">준비물 : 햄스터봇, 태블릿, 자율주행 말판, 축구장 공, 색연필, 종이등</p><br>
-          <p class="poster-goal">학습목표 : <br>- 햄스터봇을 활용한 프로그래밍 활동을 통해 컴퓨팅사고력 향상과 문제해결력을 키웁니다.<br>- 햄스터봇의 센서를 활용하여 자율주행차를 만들어봅니다.<br></p>
+          <p class="poster-goal">[학습목표] <br>- 햄스터봇을 활용한 프로그래밍 활동을 통해 컴퓨팅사고력 향상과 문제해결력을 키웁니다.<br>- 햄스터봇의 센서를 활용하여 자율주행차를 만들어봅니다.<br></p>
         </div><br>
         <div class="poster-description">
           <p>
@@ -296,7 +294,7 @@
             - 햄스터봇의 기본 구성 및 명칭을 알아보기<br>
             - 스택을 이용한 햄스터봇 제어하기<br>
             - 햄스터봇과 태블릿 페어링 하기<br>
-            - LED 색 변경하는  코딩하기<br>
+            - LED 색 변경하는  코딩하기<br><br>
 
             2차시 : 햄스터봇 움직이기<br>
             - 라인을 따라 움직이는 자율주행 햄스터만들기 <br>
@@ -940,16 +938,21 @@ setup() {
 }
 
 .dropdown-container input{
-    width: 90%;
+    width: 100%;
 }
 
 .dropdown-toggle {
     display: inline-block;
-    width: 10%;
+    /* width: 10%; */
     background-color: transparent;
     border: none;
     cursor: pointer;
     padding: 5px;
+    
+    position: absolute;
+    right: 3px;
+    top: 40%;
+    transform: translateY(-50%);
 }
 
 .arrow-icon {
