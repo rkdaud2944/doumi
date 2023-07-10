@@ -87,7 +87,7 @@
                 <p v-if="showCountdown">남은시간: {{ formatCountdown() }}</p>
                 <p v-if="emailclear">인증 완료</p>
 
-          <label for="studentCount">학생수</label>
+          <label for="studentCount">학생수 (10명 이하, 저학년-고학년 따로 신청)</label>
           <input type="number" id="studentCount" name="studentCount" ref="studentCountInput" v-model="studentCount" :max="getEventMaxStudentCount()" min="1" required />
           <div><br />
             <h3>시간대를 선택해주세요.</h3><br />
@@ -160,7 +160,7 @@
                 <p v-if="emailclear">인증 완료</p>
                 
 
-                <label for="studentCount">학생수</label>
+                <label for="studentCount">학생수 (10명 이하, 저학년-고학년 따로 신청)</label>
                 <input type="number" id="studentCount" name="studentCount" ref="studentCountInputTwoDay" v-model="studentCount" :max="getEventMaxStudentCount()" min="1" required>  
                 <div>
                   <h3>{{selectedDate}}에 방문하시는 시간대를 선택해주세요.</h3>
@@ -429,28 +429,28 @@ computed: {
 
   timeOptions() {
     return [
-      { id: 'time-a', label: '10:00 ~ 11:30' },
-      { id: 'time-b', label: '13:00 ~ 14:30' },
-      { id: 'time-c', label: '14:00 ~ 15:30' },
-      { id: 'time-d', label: '14:30 ~ 16:00' },
-      { id: 'time-e', label: '15:00 ~ 16:30' },
-      { id: 'time-f', label: '16:00 ~ 17:30' },
-      { id: 'time-g', label: '16:30 ~ 18:00' },
-      { id: 'time-h', label: '17:00 ~ 18:30' },
-      { id: 'time-i', label: '17:30 ~ 19:00' },
+      { id: 'time-a', label: '10:00 ~ 11:30 (2차시)' },
+      { id: 'time-b', label: '13:00 ~ 14:30 (2차시)' },
+      { id: 'time-c', label: '14:00 ~ 15:30 (2차시)' },
+      { id: 'time-d', label: '14:30 ~ 16:00 (2차시)' },
+      { id: 'time-e', label: '15:00 ~ 16:30 (2차시)' },
+      { id: 'time-f', label: '16:00 ~ 17:30 (2차시)' },
+      { id: 'time-g', label: '16:30 ~ 18:00 (2차시)' },
+      { id: 'time-h', label: '17:00 ~ 18:30 (2차시)' },
+      { id: 'time-i', label: '17:30 ~ 19:00 (2차시)' },
     ]
   },
   timeOptions2() {
     return [
-      { id: 'time-a', label: '10:00 ~ 11:30' },
-      { id: 'time-b', label: '13:00 ~ 14:30' },
-      { id: 'time-c', label: '14:00 ~ 15:30' },
-      { id: 'time-d', label: '14:30 ~ 16:00' },
-      { id: 'time-e', label: '15:00 ~ 16:30' },
-      { id: 'time-f', label: '16:00 ~ 17:30' },
-      { id: 'time-g', label: '16:30 ~ 18:00' },
-      { id: 'time-h', label: '17:00 ~ 18:30' },
-      { id: 'time-i', label: '17:30 ~ 19:00' },
+      { id: 'time-a', label: '10:00 ~ 11:30 (2차시)' },
+      { id: 'time-b', label: '13:00 ~ 14:30 (2차시)' },
+      { id: 'time-c', label: '14:00 ~ 15:30 (2차시)' },
+      { id: 'time-d', label: '14:30 ~ 16:00 (2차시)' },
+      { id: 'time-e', label: '15:00 ~ 16:30 (2차시)' },
+      { id: 'time-f', label: '16:00 ~ 17:30 (2차시)' },
+      { id: 'time-g', label: '16:30 ~ 18:00 (2차시)' },
+      { id: 'time-h', label: '17:00 ~ 18:30 (2차시)' },
+      { id: 'time-i', label: '17:30 ~ 19:00 (2차시)' },
     ]
   },
 },
@@ -616,6 +616,13 @@ methods: {
       this.$refs.studentCountInput.focus();
       return false;
     }
+    
+    if(this.studentCount > 10){
+      alert('학생수는 10명 이하이어야 합니다.\n저학년, 고학년 반 따로 신청해주세요.');
+      this.$refs.studentCountInput.focus();
+      return false;
+    }
+    
 
     // 시간대 선택 유효성 검사
     if (this.selectedTimes.length !== 2) {
@@ -680,6 +687,12 @@ methods: {
     // 학생수 유효성 검사
     if (!this.studentCount || this.studentCount < 1) {
       alert('학생수는 1명 이상이어야 합니다.');
+      this.$refs.studentCountInputTwoDay.focus();
+      return false;
+    }
+
+    if(this.studentCount > 10){
+      alert('학생수는 10명 이하이어야 합니다.\n저학년, 고학년 반 따로 신청해주세요.');
       this.$refs.studentCountInputTwoDay.focus();
       return false;
     }
